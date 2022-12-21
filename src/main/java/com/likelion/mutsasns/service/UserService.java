@@ -4,7 +4,7 @@ import com.likelion.mutsasns.domain.User;
 import com.likelion.mutsasns.domain.dto.user.UserJoinRequest;
 import com.likelion.mutsasns.domain.dto.user.UserJoinResponse;
 import com.likelion.mutsasns.exception.ErrorCode;
-import com.likelion.mutsasns.exception.UserNotFoundException;
+import com.likelion.mutsasns.exception.AppException;
 import com.likelion.mutsasns.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,7 +26,7 @@ public class UserService {
 
     private void validateDuplicateUser(UserJoinRequest request) {
         userRepository.findByUserName(request.getUserName()).ifPresent(user -> {
-            throw new UserNotFoundException(ErrorCode.DUPLICATED_USER_NAME, user.getUserName());
+            throw new AppException(ErrorCode.DUPLICATED_USER_NAME, user.getUserName());
         });
     }
 }
