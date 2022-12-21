@@ -1,5 +1,7 @@
 package com.likelion.mutsasns.exception;
 
+import com.likelion.mutsasns.domain.dto.Response;
+import com.likelion.mutsasns.domain.dto.error.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -9,6 +11,9 @@ public class ExceptionManager {
 
     @ExceptionHandler(value = UserNotFoundException.class)
     public ResponseEntity<?> exceptionHandler(UserNotFoundException e){
-        return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode(), e.getMessage());
+
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus())
+                .body(Response.error("ERROR", errorResponse));
     }
 }

@@ -9,7 +9,6 @@ import com.likelion.mutsasns.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -18,7 +17,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    @Transactional
     public UserJoinResponse join(UserJoinRequest request) {
         validateDuplicateUser(request);
         String password = passwordEncoder.encode(request.getPassword());
@@ -28,7 +26,7 @@ public class UserService {
 
     private void validateDuplicateUser(UserJoinRequest request) {
         userRepository.findByUserName(request.getUserName()).ifPresent(user -> {
-            throw new UserNotFoundException(ErrorCode.DUPLICATED_USER_NAME, ErrorCode.DUPLICATED_USER_NAME.getMessage());
+            throw new UserNotFoundException(ErrorCode.DUPLICATED_USER_NAME, user.getUserName());
         });
     }
 }
