@@ -3,8 +3,12 @@ package com.likelion.mutsasns.domain.dto.user;
 import com.likelion.mutsasns.domain.User;
 import com.likelion.mutsasns.domain.UserRole;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class UserJoinRequest {
