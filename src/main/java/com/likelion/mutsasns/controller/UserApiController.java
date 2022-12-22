@@ -3,6 +3,8 @@ package com.likelion.mutsasns.controller;
 import com.likelion.mutsasns.domain.dto.Response;
 import com.likelion.mutsasns.domain.dto.user.UserJoinRequest;
 import com.likelion.mutsasns.domain.dto.user.UserJoinResponse;
+import com.likelion.mutsasns.domain.dto.user.UserLoginRequest;
+import com.likelion.mutsasns.domain.dto.user.UserLoginResponse;
 import com.likelion.mutsasns.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,5 +23,11 @@ public class UserApiController {
     public Response<UserJoinResponse> join(@RequestBody UserJoinRequest request){
         UserJoinResponse userJoinResponse = userService.join(request);
         return Response.success(userJoinResponse);
+    }
+
+    @PostMapping("/login")
+    public Response<UserLoginResponse> login(@RequestBody UserLoginRequest request){
+        UserLoginResponse userLoginResponse = userService.login(request);
+        return Response.success(userLoginResponse);
     }
 }
