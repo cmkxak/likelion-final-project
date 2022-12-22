@@ -3,30 +3,52 @@ package com.likelion.mutsasns.service;
 import com.likelion.mutsasns.domain.User;
 import com.likelion.mutsasns.domain.dto.user.UserJoinRequest;
 import com.likelion.mutsasns.domain.dto.user.UserJoinResponse;
-import com.likelion.mutsasns.exception.ErrorCode;
+import com.likelion.mutsasns.domain.dto.user.UserLoginRequest;
+import com.likelion.mutsasns.domain.dto.user.UserLoginResponse;
 import com.likelion.mutsasns.exception.AppException;
+import com.likelion.mutsasns.exception.ErrorCode;
 import com.likelion.mutsasns.repository.UserRepository;
+import com.likelion.mutsasns.utils.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtTokenProvider tokenProvider;
 
     public UserJoinResponse join(UserJoinRequest request) {
         validateDuplicateUser(request);
+
         String password = passwordEncoder.encode(request.getPassword());
-        User savedUser = userRepository.save(request.toEntity(passwordEncoder.encode(password)));
+        User savedUser = userRepository.save(request.toEntity(password));
+
         return new UserJoinResponse(savedUser.getId(), savedUser.getUserName());
+    }
+
+    public UserLoginResponse login(UserLoginRequest request) {
+        User findUser = findUserByUserName(request.getUserName());
+
+        if(!passwordEncoder.matches(request.getPassword(), findUser.getPassword())){
+            throw new AppException(ErrorCode.INVALID_PASSWORD, "잘못된 비밀번호 입니다.");
+        }
+        return new UserLoginResponse(tokenProvider.createToken(request.getUserName()));
     }
 
     private void validateDuplicateUser(UserJoinRequest request) {
         userRepository.findByUserName(request.getUserName()).ifPresent(user -> {
-            throw new AppException(ErrorCode.DUPLICATED_USER_NAME, user.getUserName());
+            throw new AppException(ErrorCode.DUPLICATED_USER_NAME, user.getUserName() + "는 이미 있습니다.");
         });
+    }
+
+    public User findUserByUserName(String userName){
+        return userRepository.findByUserName(userName).orElseThrow(() ->
+                new AppException(ErrorCode.USERNAME_NOT_FOUND, userName + "는 존재하지 않는 유저입니다."));
     }
 }
