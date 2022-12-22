@@ -1,10 +1,10 @@
 package com.likelion.mutsasns.service;
 
-import com.likelion.mutsasns.domain.User;
-import com.likelion.mutsasns.domain.dto.user.UserJoinRequest;
-import com.likelion.mutsasns.domain.dto.user.UserJoinResponse;
-import com.likelion.mutsasns.domain.dto.user.UserLoginRequest;
-import com.likelion.mutsasns.domain.dto.user.UserLoginResponse;
+import com.likelion.mutsasns.domain.entity.User;
+import com.likelion.mutsasns.domain.dto.request.user.UserJoinRequest;
+import com.likelion.mutsasns.domain.dto.response.user.UserJoinResponse;
+import com.likelion.mutsasns.domain.dto.request.user.UserLoginRequest;
+import com.likelion.mutsasns.domain.dto.response.user.UserLoginResponse;
 import com.likelion.mutsasns.exception.AppException;
 import com.likelion.mutsasns.exception.ErrorCode;
 import com.likelion.mutsasns.repository.UserRepository;

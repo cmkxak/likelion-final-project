@@ -1,7 +1,7 @@
-package com.likelion.mutsasns.domain.dto.user;
+package com.likelion.mutsasns.domain.dto.request.user;
 
-import com.likelion.mutsasns.domain.User;
-import com.likelion.mutsasns.domain.UserRole;
+import com.likelion.mutsasns.domain.entity.User;
+import com.likelion.mutsasns.enumerate.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,10 +1,10 @@
 package com.likelion.mutsasns.controller;
 
-import com.likelion.mutsasns.domain.dto.Response;
-import com.likelion.mutsasns.domain.dto.user.UserJoinRequest;
-import com.likelion.mutsasns.domain.dto.user.UserJoinResponse;
-import com.likelion.mutsasns.domain.dto.user.UserLoginRequest;
-import com.likelion.mutsasns.domain.dto.user.UserLoginResponse;
+import com.likelion.mutsasns.domain.dto.response.Response;
+import com.likelion.mutsasns.domain.dto.request.user.UserJoinRequest;
+import com.likelion.mutsasns.domain.dto.response.user.UserJoinResponse;
+import com.likelion.mutsasns.domain.dto.request.user.UserLoginRequest;
+import com.likelion.mutsasns.domain.dto.response.user.UserLoginResponse;
 import com.likelion.mutsasns.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

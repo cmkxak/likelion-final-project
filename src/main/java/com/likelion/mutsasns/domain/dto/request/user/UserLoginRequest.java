@@ -1,4 +1,4 @@
-package com.likelion.mutsasns.domain.dto.user;
+package com.likelion.mutsasns.domain.dto.request.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

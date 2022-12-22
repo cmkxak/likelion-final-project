@@ -1,6 +1,6 @@
 package com.likelion.mutsasns.exception;
 
-import com.likelion.mutsasns.domain.dto.Response;
+import com.likelion.mutsasns.domain.dto.response.Response;
 import com.likelion.mutsasns.domain.dto.error.ErrorResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
