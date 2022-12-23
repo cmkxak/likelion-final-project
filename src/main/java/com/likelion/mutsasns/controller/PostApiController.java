@@ -4,7 +4,6 @@ import com.likelion.mutsasns.domain.dto.request.post.PostSaveRequest;
 import com.likelion.mutsasns.domain.dto.response.Response;
 import com.likelion.mutsasns.domain.dto.response.post.PostResponse;
 import com.likelion.mutsasns.domain.dto.response.post.PostSaveResponse;
-import com.likelion.mutsasns.domain.entity.Post;
 import com.likelion.mutsasns.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,7 @@ public class PostApiController {
 
     @GetMapping
     public Response<List<PostResponse>> findAll(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
-        return Response.success(postService.findAll(pageable));
+        return Response.success(postService.findAllPost(pageable));
     }
 
     @GetMapping("/{id}")
@@ -37,6 +36,16 @@ public class PostApiController {
 
     @PostMapping
     public Response<PostSaveResponse> save(@RequestBody PostSaveRequest request, @ApiIgnore Authentication authentication){
-        return Response.success(postService.save(request, authentication.getName()));
+        return Response.success(postService.createPost(request, authentication.getName()));
+    }
+
+    @PutMapping("/{id}")
+    public Response<PostSaveResponse> update(@PathVariable Integer id, @RequestBody PostSaveRequest request, @ApiIgnore Authentication authentication){
+        return Response.success(postService.updatePost(id, request, authentication.getName()));
+    }
+
+    @DeleteMapping("/{id}")
+    public Response<PostSaveResponse> delete(@PathVariable Integer id, @ApiIgnore Authentication authentication){
+        return Response.success(postService.deletePost(id, authentication.getName()));
     }
 }

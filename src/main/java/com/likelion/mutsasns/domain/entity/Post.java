@@ -27,12 +27,17 @@ public class Post extends BaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
+    public void updatePost(String title, String body){
+        this.title = title;
+        this.body = body;
+    }
+
     public PostResponse toResponse() {
         return PostResponse.builder()
                 .id(id)
                 .title(title)
                 .body(body)
-                .userName(this.user.getUserName())
+                .userName(user.getUserName())
                 .createdAt(super.getCreatedAt())
                 .lastModifiedAt(super.getLastModifiedAt())
                 .build();

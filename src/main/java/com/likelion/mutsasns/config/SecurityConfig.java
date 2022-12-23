@@ -1,12 +1,10 @@
 package com.likelion.mutsasns.config;
 
-import com.likelion.mutsasns.enumerate.UserRole;
 import com.likelion.mutsasns.service.UserService;
 import com.likelion.mutsasns.utils.JwtTokenFilter;
 import com.likelion.mutsasns.utils.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
