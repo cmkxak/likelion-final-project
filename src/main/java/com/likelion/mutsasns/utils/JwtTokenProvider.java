@@ -3,7 +3,6 @@ package com.likelion.mutsasns.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -48,7 +47,7 @@ public class JwtTokenProvider {
     }
 
     //토큰의 유효성 검증
-    public boolean validateToken(String token){
+    public boolean isExpired(String token){
         Date expiredDate = extractClaims(token).getExpiration();
         return expiredDate.before(new Date());
     }

@@ -30,15 +30,14 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //Token을 가지고 와줍니다.
-        String token = resolveToken(request);
-        log.info("[doFilterInternal] token 값 추출완료. token : {}", token);
+        String jwt = resolveToken(request);
+        log.info("[doFilterInternal] token 값 추출완료. token : {}", jwt);
 
         log.info("[doFilterInternal] token 값 유효성 체크 시작");
-        if (StringUtils.hasText(token) && tokenProvider.validateToken(token)){
-            UsernamePasswordAuthenticationToken authenticationToken = getAuthentication(token);
+        if(StringUtils.hasText(jwt) && !tokenProvider.isExpired(jwt)){
+            UsernamePasswordAuthenticationToken authenticationToken = getAuthentication(jwt);
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            log.info("[doFilterInternal] token 값 유효성 체크 완료");
         }
         filterChain.doFilter(request, response);
     }
@@ -48,14 +47,15 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         log.info("authentication Header:{}", header);
 
-        if(StringUtils.hasText(header) && header.startsWith("Bearer "))
-            return header.split(" ")[1];
+        if(StringUtils.hasText(header) && header.startsWith("Bearer ")){
+            return header.substring(7);
+        }
         return null;
     }
 
-    //필터에서 인증이 성공했을 때, SecurityContextHolder에 저장할 Authentication을 생성하는 역할
     public UsernamePasswordAuthenticationToken getAuthentication(String token){
         User userDetails = userService.findUserByUserName(tokenProvider.getUserName(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", List.of(new SimpleGrantedAuthority("USER")));
+        log.info("userDetails : {}", userDetails.getUserName());
+        return new UsernamePasswordAuthenticationToken(userDetails.getUserName(), "", List.of(new SimpleGrantedAuthority("USER")));
     }
 }
