@@ -14,9 +14,11 @@ import javax.persistence.*;
 @Getter
 @Entity
 public class User extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @Column(name= "user_id")
+    private Integer id;
 
     @Column(unique = true)
     private String userName;
