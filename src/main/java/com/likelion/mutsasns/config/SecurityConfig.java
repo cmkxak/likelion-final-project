@@ -1,5 +1,6 @@
 package com.likelion.mutsasns.config;
 
+import com.likelion.mutsasns.enumerate.UserRole;
 import com.likelion.mutsasns.service.UserService;
 import com.likelion.mutsasns.utils.JwtTokenFilter;
 import com.likelion.mutsasns.utils.JwtTokenProvider;
@@ -13,8 +14,16 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
-@EnableWebSecurity
+@EnableWebSecurity //스프링 시큐리티 필터가 스프링 FilterChain에 등록됨.
 public class SecurityConfig {
+
+    private final String PERMIT_URL[] = {
+            "/api/v1/users/join", "/api/v1/users/login", "/api/v1/hello", "api/v1/posts"};
+
+    private final String PERMIT_URL_SWAGGER[] = {
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
+    };
 
     private final JwtTokenProvider tokenProvider;
     private final UserService userService;
@@ -26,17 +35,17 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().and()
 
-                //httpServletRequest를 사용하는 요청들에 대한 접근 제한을 설정
                 .authorizeRequests()
-                .antMatchers("/api/v1/users/join", "/api/v1/users/login").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/v1/**").authenticated()
+                .antMatchers(PERMIT_URL).permitAll()
+                .antMatchers(PERMIT_URL_SWAGGER).permitAll()
+                .anyRequest().authenticated()
 
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
                 .and()
-                .addFilterBefore(new JwtTokenFilter(tokenProvider,userService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenFilter(tokenProvider, userService), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 }
