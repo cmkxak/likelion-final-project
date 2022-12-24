@@ -20,7 +20,10 @@ public class SecurityConfig {
 
     private final String PERMIT_URL_SWAGGER[] = {
             "/v3/api-docs/**",
-            "/swagger-ui/**"
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+            "/webjars/**",
+            "/swagger/**"
     };
 
     private final JwtTokenProvider tokenProvider;
