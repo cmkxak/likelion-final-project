@@ -1,12 +1,12 @@
 # MutsaSNS
 
-![img](https://42place.innovationacademy.kr/wp-content/uploads/2020/09/likelion.png)
-
 ## 💬 서비스 소개
+<p align="center">
+<img src="https://42place.innovationacademy.kr/wp-content/uploads/2020/09/likelion.png">
 MUTSASNS는 멋쟁이 사자처럼 백엔드 스쿨 2기 파이널 프로젝트 작품으로, SNS(Social-Network-Service)를 제공하는 사이트 입니다.
+</p>
 
 ## 🔨 TECH STACK
-
 ![Spring Boot](https://img.shields.io/badge/spring_boot-6DB33F?style=for-the-badge&logo=Springboot&logoColor=white)
 ![Spring Security](https://img.shields.io/badge/spring_security-6DB33F?style=for-the-badge&logo=SpringSecurity&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MYSQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white)
