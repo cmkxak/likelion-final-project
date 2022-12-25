@@ -5,6 +5,7 @@ import com.likelion.mutsasns.domain.dto.request.user.UserJoinRequest;
 import com.likelion.mutsasns.domain.dto.request.user.UserLoginRequest;
 import com.likelion.mutsasns.domain.dto.response.user.UserJoinResponse;
 import com.likelion.mutsasns.domain.dto.response.user.UserLoginResponse;
+import com.likelion.mutsasns.domain.entity.User;
 import com.likelion.mutsasns.exception.AppException;
 import com.likelion.mutsasns.exception.ErrorCode;
 import com.likelion.mutsasns.service.UserService;
@@ -46,7 +47,9 @@ class UserApiControllerTest {
                 .password("testpw")
                 .build();
 
-        when(userService.join(any())).thenReturn(new UserJoinResponse(1, userJoinRequest.getUserName()));
+        User user = User.of(userJoinRequest.getUserName(), userJoinRequest.getPassword());
+
+        when(userService.join(any(),any())).thenReturn(user);
 
         mockMvc.perform(post("/api/v1/users/join")
                         .with(csrf())
@@ -65,7 +68,7 @@ class UserApiControllerTest {
                 .password("password")
                 .build();
 
-        when(userService.join(any()))
+        when(userService.join(any(), any()))
                 .thenThrow(new AppException(ErrorCode.DUPLICATED_USER_NAME, ErrorCode.DUPLICATED_USER_NAME.getMessage()));
 
         mockMvc.perform(post("/api/v1/users/join")
