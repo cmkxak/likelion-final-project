@@ -25,10 +25,10 @@ import java.util.stream.Collectors;
 @Service
 public class PostService {
 
-    private static final String SUCCESS_MESSAGE = "포스트 등록 완료";
-    private static final String UPDATE_MESSAGE = "포스트 수정 완료";
-    private static final String DELETE_MESSAGE = "포스트 삭제 완료";
-    private static final String INVALID_TOKEN_MESSAGE = "유효하지 않은 토큰입니다.";
+    private final String SUCCESS_MESSAGE = "포스트 등록 완료";
+    private final String UPDATE_MESSAGE = "포스트 수정 완료";
+    private final String DELETE_MESSAGE = "포스트 삭제 완료";
+    private final String INVALID_TOKEN_MESSAGE = "유효하지 않은 토큰입니다.";
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
@@ -61,7 +61,7 @@ public class PostService {
 
     @Transactional
     public PostSaveResponse updatePost(Integer postId, PostSaveRequest request, String userName) {
-        validateUserByToken(postId, userName);
+        validateCorrectPost(postId, userName);
 
         Post findPost = postRepository.findById(postId).orElseThrow(() ->
                 new AppException(ErrorCode.POST_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage()));
@@ -73,7 +73,7 @@ public class PostService {
 
     @Transactional
     public PostSaveResponse deletePost(Integer postId, String userName) {
-        validateUserByToken(postId, userName);
+        validateCorrectPost(postId, userName);
 
         try {
             postRepository.deleteById(postId);
@@ -84,7 +84,7 @@ public class PostService {
         return new PostSaveResponse(DELETE_MESSAGE, postId);
     }
 
-    private boolean validateUserByToken(Integer postId, String userName) {
+    private boolean validateCorrectPost(Integer postId, String userName) {
         //올바른 유저 인지 검증
         User findUser = userRepository.findByUserName(userName).orElseThrow(() ->
                 new AppException(ErrorCode.INVALID_TOKEN, INVALID_TOKEN_MESSAGE));
