@@ -27,7 +27,7 @@ public class UserApiController {
 
     @PostMapping("/login")
     public Response<UserLoginResponse> login(@RequestBody UserLoginRequest request){
-        UserLoginResponse userLoginResponse = userService.login(request);
-        return Response.success(userLoginResponse);
+        String token = userService.login(request);
+        return Response.success(new UserLoginResponse(token));
     }
 }
