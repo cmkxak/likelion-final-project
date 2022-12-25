@@ -13,8 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class UserService {
@@ -23,6 +25,7 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
 
+    @Transactional
     public UserJoinResponse join(UserJoinRequest request) {
         validateDuplicateUser(request);
 
