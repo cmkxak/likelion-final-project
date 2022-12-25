@@ -85,7 +85,7 @@ class UserApiControllerTest {
                 .password("password")
                 .build();
 
-        when(userService.login(any())).thenReturn(new UserLoginResponse("jwt"));
+        when(userService.login(any(), any())).thenReturn("jwt");
 
         mockMvc.perform(post("/api/v1/users/login")
                         .with(csrf())
@@ -106,7 +106,7 @@ class UserApiControllerTest {
                 .password("1q2w3e4r")
                 .build();
 
-        when(userService.login(any())).thenThrow(new AppException(ErrorCode.USERNAME_NOT_FOUND,
+        when(userService.login(any(), any())).thenThrow(new AppException(ErrorCode.USERNAME_NOT_FOUND,
                 userLoginRequest.getUserName() + "는 존재하지 않는 유저입니다."));
 
         mockMvc.perform(post("/api/v1/users/login")
@@ -126,7 +126,7 @@ class UserApiControllerTest {
                 .password("1q2w3e4r!!!")
                 .build();
 
-        when(userService.login(any())).thenThrow(new AppException(ErrorCode.INVALID_PASSWORD, "잘못된 비밀번호 입니다."));
+        when(userService.login(any(), any())).thenThrow(new AppException(ErrorCode.INVALID_PASSWORD, "잘못된 비밀번호 입니다."));
 
         mockMvc.perform(post("/api/v1/users/login")
                         .with(csrf())
