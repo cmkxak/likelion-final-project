@@ -3,9 +3,12 @@ package com.likelion.mutsasns.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.likelion.mutsasns.domain.dto.request.user.UserJoinRequest;
 import com.likelion.mutsasns.domain.dto.request.user.UserLoginRequest;
+import com.likelion.mutsasns.domain.dto.response.user.UserJoinResponse;
 import com.likelion.mutsasns.domain.dto.response.user.UserLoginResponse;
+import com.likelion.mutsasns.exception.AppException;
 import com.likelion.mutsasns.exception.ErrorCode;
 import com.likelion.mutsasns.service.UserService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,23 +25,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+@WebMvcTest(UserApiController.class)
 class UserApiControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
     @MockBean
     UserService userService;
+
     @Autowired
     ObjectMapper objectMapper;
 
     @Test
+    @DisplayName("회원 가입 성공")
     @WithMockUser
-    void 회원가입_성공() throws Exception {
+    void join_success() throws Exception {
         UserJoinRequest userJoinRequest = UserJoinRequest.builder()
-                .userName("testId11")
-                .password("1q2w3e4r")
+                .userName("test")
+                .password("testpw")
                 .build();
+
+        when(userService.join(any())).thenReturn(new UserJoinResponse(1, userJoinRequest.getUserName()));
 
         mockMvc.perform(post("/api/v1/users/join")
                         .with(csrf())
@@ -49,30 +57,35 @@ class UserApiControllerTest {
     }
 
     @Test
+    @DisplayName("회원 가입 실패 -  userName이 중복인 경우")
     @WithMockUser
-    void 회원가입_실패() throws Exception {
+    void join_fail() throws Exception {
         UserJoinRequest userJoinRequest = UserJoinRequest.builder()
-                .userName("chulmin1")
-                .password("1q2w3e4r1")
+                .userName("root")
+                .password("password")
                 .build();
+
+        when(userService.join(any()))
+                .thenThrow(new AppException(ErrorCode.DUPLICATED_USER_NAME, ErrorCode.DUPLICATED_USER_NAME.getMessage()));
 
         mockMvc.perform(post("/api/v1/users/join")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userJoinRequest)))
                 .andDo(print())
-                .andExpect(status().isConflict());
+                .andExpect(status().is(ErrorCode.DUPLICATED_USER_NAME.getHttpStatus().value()));
     }
 
     @Test
+    @DisplayName("로그인 성공")
     @WithMockUser
-    void 로그인_성공() throws Exception {
+    void login_success() throws Exception {
         UserLoginRequest userLoginRequest = UserLoginRequest.builder()
-                .userName("chulmin1")
-                .password("1q2w3e4r")
+                .userName("root")
+                .password("password")
                 .build();
 
-        when(userService.login(any())).thenReturn(new UserLoginResponse("token"));
+        when(userService.login(any())).thenReturn(new UserLoginResponse("jwt"));
 
         mockMvc.perform(post("/api/v1/users/login")
                         .with(csrf())
@@ -85,12 +98,16 @@ class UserApiControllerTest {
     }
 
     @Test
+    @DisplayName("로그인 실패 - userName이 없는 경우")
     @WithMockUser
-    void 로그인_실패_userName이_없는_경우() throws Exception{
+    void login_fail() throws Exception{
         UserLoginRequest userLoginRequest = UserLoginRequest.builder()
                 .userName("chulmin88")
                 .password("1q2w3e4r")
                 .build();
+
+        when(userService.login(any())).thenThrow(new AppException(ErrorCode.USERNAME_NOT_FOUND,
+                userLoginRequest.getUserName() + "는 존재하지 않는 유저입니다."));
 
         mockMvc.perform(post("/api/v1/users/login")
                         .with(csrf())
@@ -101,12 +118,15 @@ class UserApiControllerTest {
     }
 
     @Test
+    @DisplayName("로그인 실패 - password 틀린 경우")
     @WithMockUser
-    void 로그인_실패_입력한_password가_틀린_경우() throws Exception{
+    void login_fail2() throws Exception{
         UserLoginRequest userLoginRequest = UserLoginRequest.builder()
-                .userName("chulmin1")
+                .userName("root")
                 .password("1q2w3e4r!!!")
                 .build();
+
+        when(userService.login(any())).thenThrow(new AppException(ErrorCode.INVALID_PASSWORD, "잘못된 비밀번호 입니다."));
 
         mockMvc.perform(post("/api/v1/users/login")
                         .with(csrf())
