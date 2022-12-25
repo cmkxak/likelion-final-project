@@ -5,6 +5,7 @@ import com.likelion.mutsasns.utils.JwtTokenFilter;
 import com.likelion.mutsasns.utils.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,7 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final String PERMIT_URL[] = {
-            "/api/v1/users/join", "/api/v1/users/login", "/api/v1/hello", "api/v1/posts"};
+            "/api/v1/users/join", "/api/v1/users/login", "/api/v1/hello"};
 
     private final String PERMIT_URL_SWAGGER[] = {
             "/v3/api-docs/**",
@@ -39,6 +40,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers(PERMIT_URL).permitAll()
                 .antMatchers(PERMIT_URL_SWAGGER).permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
                 .anyRequest().authenticated()
 
                 .and()
@@ -49,4 +51,5 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtTokenFilter(tokenProvider, userService), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 }
