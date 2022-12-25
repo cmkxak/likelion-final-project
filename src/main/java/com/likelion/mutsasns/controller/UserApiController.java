@@ -5,6 +5,7 @@ import com.likelion.mutsasns.domain.dto.request.user.UserJoinRequest;
 import com.likelion.mutsasns.domain.dto.response.user.UserJoinResponse;
 import com.likelion.mutsasns.domain.dto.request.user.UserLoginRequest;
 import com.likelion.mutsasns.domain.dto.response.user.UserLoginResponse;
+import com.likelion.mutsasns.domain.entity.User;
 import com.likelion.mutsasns.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +22,8 @@ public class UserApiController {
 
     @PostMapping("/join")
     public Response<UserJoinResponse> join(@RequestBody UserJoinRequest request){
-        UserJoinResponse userJoinResponse = userService.join(request);
-        return Response.success(userJoinResponse);
+        User savedUser = userService.join(request.getUserName(), request.getPassword());
+        return Response.success(new UserJoinResponse(savedUser.getId(), savedUser.getUserName()));
     }
 
     @PostMapping("/login")

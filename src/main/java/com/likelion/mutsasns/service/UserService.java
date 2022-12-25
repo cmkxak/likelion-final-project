@@ -26,13 +26,13 @@ public class UserService {
     private final JwtTokenProvider tokenProvider;
 
     @Transactional
-    public UserJoinResponse join(UserJoinRequest request) {
-        validateDuplicateUser(request);
+    public User join(String userName, String password) {
+        validateDuplicateUser(userName);
 
-        String password = passwordEncoder.encode(request.getPassword());
-        User savedUser = userRepository.save(request.toEntity(password));
+        String encPassword = passwordEncoder.encode(password);
+        User savedUser = userRepository.save(User.of(userName, encPassword));
 
-        return new UserJoinResponse(savedUser.getId(), savedUser.getUserName());
+        return savedUser;
     }
 
     public String login(String userName, String password) {
@@ -44,8 +44,8 @@ public class UserService {
         return tokenProvider.createToken(userName);
     }
 
-    private void validateDuplicateUser(UserJoinRequest request) {
-        userRepository.findByUserName(request.getUserName()).ifPresent(user -> {
+    private void validateDuplicateUser(String userName) {
+        userRepository.findByUserName(userName).ifPresent(user -> {
             throw new AppException(ErrorCode.DUPLICATED_USER_NAME, user.getUserName() + "는 이미 있습니다.");
         });
     }
