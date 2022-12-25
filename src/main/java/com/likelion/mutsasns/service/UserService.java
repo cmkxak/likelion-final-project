@@ -35,13 +35,13 @@ public class UserService {
         return new UserJoinResponse(savedUser.getId(), savedUser.getUserName());
     }
 
-    public String login(UserLoginRequest request) {
-        User findUser = findUserByUserName(request.getUserName());
+    public String login(String userName, String password) {
+        User findUser = findUserByUserName(userName);
 
-        if(!passwordEncoder.matches(request.getPassword(), findUser.getPassword())){
+        if(!passwordEncoder.matches(password, findUser.getPassword())){
             throw new AppException(ErrorCode.INVALID_PASSWORD, "잘못된 비밀번호 입니다.");
         }
-        return tokenProvider.createToken(request.getUserName());
+        return tokenProvider.createToken(userName);
     }
 
     private void validateDuplicateUser(UserJoinRequest request) {
