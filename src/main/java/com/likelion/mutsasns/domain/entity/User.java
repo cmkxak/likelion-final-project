@@ -28,7 +28,7 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public static User of(String userName, String encPassword) {
+    public static User registerUser(String userName, String encPassword) {
         return User.builder()
                 .userName(userName)
                 .password(encPassword)

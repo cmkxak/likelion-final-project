@@ -3,8 +3,6 @@ package com.likelion.mutsasns.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.likelion.mutsasns.domain.dto.request.user.UserJoinRequest;
 import com.likelion.mutsasns.domain.dto.request.user.UserLoginRequest;
-import com.likelion.mutsasns.domain.dto.response.user.UserJoinResponse;
-import com.likelion.mutsasns.domain.dto.response.user.UserLoginResponse;
 import com.likelion.mutsasns.domain.entity.User;
 import com.likelion.mutsasns.exception.AppException;
 import com.likelion.mutsasns.exception.ErrorCode;
@@ -47,7 +45,7 @@ class UserApiControllerTest {
                 .password("testpw")
                 .build();
 
-        User user = User.of(userJoinRequest.getUserName(), userJoinRequest.getPassword());
+        User user = User.registerUser(userJoinRequest.getUserName(), userJoinRequest.getPassword());
 
         when(userService.join(any(),any())).thenReturn(user);
 

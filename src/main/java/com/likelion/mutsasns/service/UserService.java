@@ -29,7 +29,7 @@ public class UserService {
 
         String encPassword = passwordEncoder.encode(password);
 
-        User savedUser = userRepository.save(User.of(userName, encPassword));
+        User savedUser = userRepository.save(User.registerUser(userName, encPassword));
 
         return savedUser;
     }
