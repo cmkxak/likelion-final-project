@@ -1,10 +1,8 @@
 package com.likelion.mutsasns.service;
 
+import com.likelion.mutsasns.domain.dto.request.user.UserChangeRoleRequest;
 import com.likelion.mutsasns.domain.entity.User;
-import com.likelion.mutsasns.domain.dto.request.user.UserJoinRequest;
-import com.likelion.mutsasns.domain.dto.response.user.UserJoinResponse;
-import com.likelion.mutsasns.domain.dto.request.user.UserLoginRequest;
-import com.likelion.mutsasns.domain.dto.response.user.UserLoginResponse;
+import com.likelion.mutsasns.enumerate.UserRole;
 import com.likelion.mutsasns.exception.AppException;
 import com.likelion.mutsasns.exception.ErrorCode;
 import com.likelion.mutsasns.repository.UserRepository;
@@ -30,6 +28,7 @@ public class UserService {
         validateDuplicateUser(userName);
 
         String encPassword = passwordEncoder.encode(password);
+
         User savedUser = userRepository.save(User.of(userName, encPassword));
 
         return savedUser;
@@ -41,7 +40,24 @@ public class UserService {
         if(!passwordEncoder.matches(password, findUser.getPassword())){
             throw new AppException(ErrorCode.INVALID_PASSWORD, "잘못된 비밀번호 입니다.");
         }
-        return tokenProvider.createToken(userName);
+        return tokenProvider.createToken(userName, findUser.getRole().getValue());
+    }
+
+    /**
+     * ADMIN 회원이 일반 회원을 ADMIN 혹은 USER로 등급을 변경하는 기능
+     */
+    @Transactional
+    public UserRole changeRole(Integer id, UserChangeRoleRequest request) {
+        //변경하려는 유저가 존재하지 않는 경우
+        User findUser = userRepository.findById(id).orElseThrow(() ->
+                new AppException(ErrorCode.USERNAME_NOT_FOUND, "변경하려는 유저가 존재하지 않습니다."));
+
+        log.info("변경할 유저의 역할 : {}", findUser.getRole().getValue());
+
+        findUser.changeRole(request.getRole());
+
+        log.info("변경된 유저의 역할 : {}", findUser.getRole().name());
+        return findUser.getRole();
     }
 
     private void validateDuplicateUser(String userName) {

@@ -1,6 +1,5 @@
 package com.likelion.mutsasns.config;
 
-import com.likelion.mutsasns.service.UserService;
 import com.likelion.mutsasns.utils.JwtTokenFilter;
 import com.likelion.mutsasns.utils.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +39,7 @@ public class SecurityConfig {
                 .antMatchers(PERMIT_URL).permitAll()
                 .antMatchers(PERMIT_URL_SWAGGER).permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
+                .antMatchers("/api/v1/users/**/role/change").hasRole("ADMIN")
                 .anyRequest().authenticated()
 
                 .and()
