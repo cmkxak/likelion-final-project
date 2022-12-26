@@ -21,12 +21,13 @@ SNS(Social-Network-Service)를 제공하는 사이트 입니다.
 LINK : http://ec2-52-79-234-25.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui/
 
 ## 📔 Endpoints
-|  구분  |  HTTP  |        URI         | 설명 |
-|:----:|:------:|:------------------:|:-----------------------------:|
-| USER |  POST  | api/v1/users/join  | 회원가입
-| USER |  POST  | api/v1/users/login | 로그인 및 토큰 발급
-| POST |  GET   |    api/v1/posts    | 게시글 리스트 조회
-| POST |  GET   | api/v1/posts/{id}  | 게시글 상세 조회
-| POST |  POST  |    api/v1/posts    | 게시글 등록
-| POST |  PUT   | api/v1/posts/{id}  | 게시글 수정
-| POST | DELETE |  api/v1/posts/{id}  | 게시글 삭제
+|  구분  |  HTTP  |              URI              |          설명           |
+|:----:|:------:|:-----------------------------:|:------------------------:|
+| USER |  POST  |       api/v1/users/join       |         회원가입          |
+| USER |  POST  |      api/v1/users/login       |      로그인 및 토큰 발급      |
+| POST |  GET   |         api/v1/posts          |      게시글 리스트 조회       |
+| POST |  GET   |       api/v1/posts/{id}       |       게시글 상세 조회       |
+| POST |  POST  |         api/v1/posts          |        게시글 등록         |
+| POST |  POST  | api/v1/posts/{id}/role/change | 유저 권한 변경 (ONLY ADMIN) |
+| POST |  PUT   |       api/v1/posts/{id}       |        게시글 수정         |
+| POST | DELETE |       api/v1/posts/{id}       |        게시글 삭제         |
