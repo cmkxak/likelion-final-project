@@ -1,6 +1,5 @@
 package com.likelion.mutsasns.domain.entity;
 
-import com.likelion.mutsasns.domain.dto.response.post.PostResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,16 +29,5 @@ public class Post extends BaseEntity{
     public void updatePost(String title, String body){
         this.title = title;
         this.body = body;
-    }
-
-    public PostResponse toResponse() {
-        return PostResponse.builder()
-                .id(id)
-                .title(title)
-                .body(body)
-                .userName(user.getUserName())
-                .createdAt(super.getCreatedAt())
-                .lastModifiedAt(super.getLastModifiedAt())
-                .build();
     }
 }

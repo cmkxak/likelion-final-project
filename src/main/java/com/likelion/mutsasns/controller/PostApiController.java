@@ -7,14 +7,13 @@ import com.likelion.mutsasns.domain.dto.response.post.PostSaveResponse;
 import com.likelion.mutsasns.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
-
-import java.util.List;
 
 @Slf4j
 @RequestMapping("/api/v1/posts")
@@ -25,7 +24,7 @@ public class PostApiController {
     private final PostService postService;
 
     @GetMapping
-    public Response<List<PostResponse>> findAll(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+    public Response<Page<PostResponse>> findAll(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
         return Response.success(postService.findAllPost(pageable));
     }
 

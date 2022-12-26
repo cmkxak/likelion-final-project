@@ -16,31 +16,28 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class PostService {
 
-    private final String SUCCESS_MESSAGE = "포스트 등록 완료";
-    private final String UPDATE_MESSAGE = "포스트 수정 완료";
-    private final String DELETE_MESSAGE = "포스트 삭제 완료";
-    private final String INVALID_TOKEN_MESSAGE = "유효하지 않은 토큰입니다.";
+    private static final String SUCCESS_MESSAGE = "포스트 등록 완료";
+    private static final String UPDATE_MESSAGE = "포스트 수정 완료";
+    private static final String DELETE_MESSAGE = "포스트 삭제 완료";
+    private static final String INVALID_TOKEN_MESSAGE = "유효하지 않은 토큰입니다.";
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
 
-    public List<PostResponse> findAllPost(Pageable pageable) {
+    public Page<PostResponse> findAllPost(Pageable pageable) {
         Page<Post> posts = postRepository.findAll(pageable);
-        return posts.stream().map(Post::toResponse).collect(Collectors.toList());
+        return PostResponse.of(posts);
     }
 
     public PostResponse findOne(Integer id) {
         Post findPost = postRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND, ""));
-        return findPost.toResponse();
+        return PostResponse.of(findPost);
     }
 
     @Transactional
