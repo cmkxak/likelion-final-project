@@ -28,7 +28,6 @@ public class SecurityConfig {
     };
 
     private final JwtTokenProvider tokenProvider;
-    private final UserService userService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -48,8 +47,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
                 .and()
-                .addFilterBefore(new JwtTokenFilter(tokenProvider, userService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
 }
