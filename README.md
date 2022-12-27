@@ -233,7 +233,7 @@ LINK : http://ec2-52-79-234-25.ap-northeast-2.compute.amazonaws.com:8080/swagger
 - RESTful 애플리케이션의 인증/인가 처리를 위해 UsernamePasswordAuthenticationFilter 앞에 커스텀 필터 배치
 - JWT(Json Web Token)을 통한, 인증 구현
 - UserDetails / UserDetailsService를 활용하여 사용자의 정보를 가져오도록 구현
-- "HMAC using SHA-256" 알고리즘을 사용하여 해싱 처리
+- "HMAC using SHA-256" 알고리즘을 사용하여 token 해싱 처리
 - Token의 Claim에 UserRole(USER / ADMIN)이 담기도록 구현
 - 인증이 실패할 경우의 처리를 담당하는 JwtAuthenticationEntryPoint 클래스 구현
 - 권한이 없는 경우의 처리를 담당하는 JwtAccessDeniedHandler 클래스 구현
