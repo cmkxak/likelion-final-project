@@ -47,15 +47,11 @@ public class UserService {
      */
     @Transactional
     public UserRole changeRole(Integer id, UserChangeRoleRequest request) {
-        //변경하려는 유저가 존재하지 않는 경우
         User findUser = userRepository.findById(id).orElseThrow(() ->
                 new AppException(ErrorCode.USERNAME_NOT_FOUND, "변경하려는 유저가 존재하지 않습니다."));
 
-        log.info("변경할 유저의 역할 : {}", findUser.getRole().getValue());
-
         findUser.changeRole(request.getRole());
 
-        log.info("변경된 유저의 역할 : {}", findUser.getRole().name());
         return findUser.getRole();
     }
 

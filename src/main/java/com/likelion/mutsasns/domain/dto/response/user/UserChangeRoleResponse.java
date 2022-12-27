@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class UserModifyRoleResponse {
+public class UserChangeRoleResponse {
     private String message;
     private UserRole role;
 }

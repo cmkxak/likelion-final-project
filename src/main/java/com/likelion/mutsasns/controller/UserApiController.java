@@ -4,13 +4,13 @@ import com.likelion.mutsasns.domain.dto.request.user.UserChangeRoleRequest;
 import com.likelion.mutsasns.domain.dto.request.user.UserJoinRequest;
 import com.likelion.mutsasns.domain.dto.request.user.UserLoginRequest;
 import com.likelion.mutsasns.domain.dto.response.Response;
+import com.likelion.mutsasns.domain.dto.response.user.UserChangeRoleResponse;
 import com.likelion.mutsasns.domain.dto.response.user.UserJoinResponse;
 import com.likelion.mutsasns.domain.dto.response.user.UserLoginResponse;
 import com.likelion.mutsasns.domain.entity.User;
 import com.likelion.mutsasns.enumerate.UserRole;
 import com.likelion.mutsasns.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/users")
@@ -33,8 +33,8 @@ public class UserApiController {
     }
 
     @PostMapping("/{id}/role/change")
-    public ResponseEntity<String> changeRole(@PathVariable Integer id, @RequestBody UserChangeRoleRequest request){
-        UserRole userRole = userService.changeRole(id, request);
-        return ResponseEntity.ok().body("변경이 완료되었습니다. 변경된 유저의 등급은 : " + userRole.getValue() + "입니다.");
+    public Response<UserChangeRoleResponse> changeRole(@PathVariable Integer id, @RequestBody UserChangeRoleRequest request){
+        UserRole modifiedUserRole = userService.changeRole(id, request);
+        return Response.success(new UserChangeRoleResponse("변경 되었습니다.", modifiedUserRole));
     }
 }
