@@ -214,7 +214,7 @@ LINK : http://ec2-52-79-234-25.ap-northeast-2.compute.amazonaws.com:8080/swagger
 }
 ```
 
-##📃미션 요구사항 분석 & 체크리스트
+## 📃미션 요구사항 분석 & 체크리스트
 
 ### 체크리스트
 - [x] 인증/인가 필터 구현
