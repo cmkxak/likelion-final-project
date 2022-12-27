@@ -1,5 +1,6 @@
 package com.likelion.mutsasns.domain.dto.response.post;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.likelion.mutsasns.domain.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,11 @@ public class PostResponse {
     private String title;
     private String body;
     private String userName;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lastModifiedAt;
 
     public static Page<PostResponse> of(Page<Post> posts) {
