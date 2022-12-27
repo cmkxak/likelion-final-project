@@ -5,6 +5,7 @@ import com.likelion.mutsasns.domain.dto.response.post.PostResponse;
 import com.likelion.mutsasns.domain.dto.response.post.PostSaveResponse;
 import com.likelion.mutsasns.domain.entity.Post;
 import com.likelion.mutsasns.domain.entity.User;
+import com.likelion.mutsasns.enumerate.UserRole;
 import com.likelion.mutsasns.exception.AppException;
 import com.likelion.mutsasns.exception.ErrorCode;
 import com.likelion.mutsasns.repository.PostRepository;
@@ -82,7 +83,7 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(() ->
                 new AppException(ErrorCode.POST_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage()));
 
-        if (post.getUser().getId() == findUser.getId()) {
+        if (post.getUser().getId() == findUser.getId() || findUser.getRole() == UserRole.ADMIN) {
             return true;
         } else {
             throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
