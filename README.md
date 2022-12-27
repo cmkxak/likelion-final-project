@@ -4,9 +4,7 @@
 <p align="center">
 <img src="https://42place.innovationacademy.kr/wp-content/uploads/2020/09/likelion.png">
 <br>
-MutsaSNS는 멋쟁이 사자처럼 백엔드 스쿨 2기 파이널 프로젝트 작품으로, 
-<br>
-SNS(Social-Network-Service)를 제공하는 사이트 입니다.
+MutsaSNS는 멋쟁이 사자처럼 백엔드 스쿨 2기 파이널 프로젝트 작품으로, SNS(Social-Network-Service)를 제공하는 웹 사이트 입니다.
 </p>
 
 ## 🔨 TECH STACK
