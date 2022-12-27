@@ -1,6 +1,6 @@
 package com.likelion.mutsasns.service;
 
-import com.likelion.mutsasns.domain.dto.request.post.PostSaveRequest;
+import com.likelion.mutsasns.domain.dto.request.post.PostRequest;
 import com.likelion.mutsasns.domain.entity.Post;
 import com.likelion.mutsasns.domain.entity.User;
 import com.likelion.mutsasns.exception.AppException;
@@ -23,23 +23,34 @@ import static org.mockito.Mockito.when;
 
 class PostServiceTest {
     private PostService postService;
+
+    private User user;
     private User mockUser;
+
+    private Post post;
     private Post mockPost;
+
     private PostRepository postRepository = mock(PostRepository.class);
     private UserRepository userRepository = mock(UserRepository.class);
+
+    private Integer postId;
 
     @BeforeEach
     void setUp() {
         postService = new PostService(postRepository, userRepository);
+
         mockUser = mock(User.class);
+        user = User.registerUser("testUser", "1q2w3e4r");
+
+        post = Post.createPost("제목 입니다.", "내용 입니다.", user);
         mockPost = mock(Post.class);
+
+        postId = 100;
     }
 
     @Test
     @DisplayName("포스트 상세 조회 - 성공")
     void get_one_post() {
-        User user = User.registerUser("유저1", "1q2w3e4r");
-        Post post = Post.createPost("제목입니다.", "내용입니다.", user);
 
         when(postRepository.findById(post.getId())).thenReturn(Optional.of(post));
 
@@ -55,7 +66,7 @@ class PostServiceTest {
         when(postRepository.save(any())).thenReturn(mockPost);
 
         Assertions.assertDoesNotThrow(() -> {
-            postService.createPost(new PostSaveRequest("제목입니다.", "내용입니다."), mockUser.getUserName());
+            postService.createPost(new PostRequest("제목입니다.", "내용입니다."), mockUser.getUserName());
         });
     }
 
@@ -66,7 +77,7 @@ class PostServiceTest {
         when(postRepository.save(any())).thenReturn(mockPost);
 
         AppException appException = assertThrows(AppException.class, () -> {
-            postService.createPost(new PostSaveRequest("제목입니다.", "내용입니다."), mockUser.getUserName());
+            postService.createPost(new PostRequest("제목입니다.", "내용입니다."), mockUser.getUserName());
         });
 
         assertEquals(ErrorCode.USERNAME_NOT_FOUND, appException.getErrorCode());
@@ -76,13 +87,11 @@ class PostServiceTest {
     @DisplayName("포스트 수정 - 실패 : 포스트 존재하지 않음")
     @WithMockUser
     void update_post_fail() {
-        User user = User.registerUser("유저1", "1q2w3e4r");
-
         when(userRepository.findByUserName(user.getUserName())).thenReturn(Optional.of(user));
-        when(postRepository.findById(121)).thenReturn(Optional.empty());
+        when(postRepository.findById(postId)).thenReturn(Optional.empty());
 
         AppException appException = Assertions.assertThrows(AppException.class, () -> {
-            postService.updatePost(121, new PostSaveRequest("변경된 제목.", "변경된 내용"), user.getUserName());
+            postService.updatePost(postId, new PostRequest("변경된 제목.", "변경된 내용"), user.getUserName());
         });
 
         assertEquals(ErrorCode.POST_NOT_FOUND, appException.getErrorCode());
@@ -91,25 +100,22 @@ class PostServiceTest {
     @Test
     @DisplayName("포스트 수정 - 실패 : 작성자와 유저가 다른 경우")
     void update_post_fail2() {
-        User user = User.registerUser("유저1", "1q2w3e4r");
-        User user2 = User.registerUser("유저2", "1q2w3e4r5");
+        User otherUser = User.registerUser("유저2", "1q2w3e4r5");
 
-        when(postRepository.findById(121)).thenReturn(Optional.of(new Post(1, "제목", "내용", user)));
+        when(postRepository.findById(postId)).thenReturn(Optional.of(new Post(postId, "제목", "내용", user)));
 
         Assertions.assertThrows(AppException.class, () -> {
-            postService.updatePost(121, new PostSaveRequest("변경된 제목", "변경된 내용"), user2.getUserName());
+            postService.updatePost(postId, new PostRequest("변경된 제목", "변경된 내용"), otherUser.getUserName());
         });
     }
 
     @Test
     @DisplayName("포스트 수정 - 실패 : 유저 존재하지 않음")
     void update_post_fail3() {
-        User user = User.registerUser("유저1", "1q2w3e4r");
-
-        when(postRepository.findById(121)).thenReturn(Optional.of(new Post(1, "제목", "내용", user)));
+        when(postRepository.findById(postId)).thenReturn(Optional.of(new Post(postId, "제목", "내용", mockUser)));
 
         AppException appException = Assertions.assertThrows(AppException.class, () -> {
-            postService.updatePost(121, new PostSaveRequest("변경된 제목", "변경된 내용"), "testUser");
+            postService.updatePost(postId, new PostRequest("변경된 제목", "변경된 내용"), user.getUserName());
         });
 
         assertEquals(ErrorCode.USERNAME_NOT_FOUND, appException.getErrorCode());
@@ -118,13 +124,11 @@ class PostServiceTest {
     @Test
     @DisplayName("포스트 삭제 - 실패 : 유저 존재하지 않음")
     void delete_post_fail() {
-        User user = User.registerUser("유저1", "1q2w3e4r");
-
-        when(postRepository.findById(121)).thenReturn(Optional.of(new Post(1, "제목", "내용", mockUser)));
+        when(postRepository.findById(postId)).thenReturn(Optional.of(new Post(postId, "제목", "내용", mockUser)));
         when(userRepository.findByUserName(user.getUserName())).thenReturn(Optional.empty());
 
         AppException appException = Assertions.assertThrows(AppException.class, () -> {
-            postService.deletePost(121, user.getUserName());
+            postService.deletePost(postId, user.getUserName());
         });
 
         assertEquals(ErrorCode.USERNAME_NOT_FOUND, appException.getErrorCode());
@@ -133,13 +137,11 @@ class PostServiceTest {
     @Test
     @DisplayName("포스트 삭제 - 실패 : 포스트 존재하지 않음")
     void delete_post_fail2() {
-        User user = User.registerUser("유저1", "1q2w3e4r");
-
         when(userRepository.findByUserName(user.getUserName())).thenReturn(Optional.of(user));
-        when(postRepository.findById(121)).thenReturn(Optional.empty());
+        when(postRepository.findById(postId)).thenReturn(Optional.empty());
 
         AppException appException = assertThrows(AppException.class, () -> {
-            postService.deletePost(121, user.getUserName());
+            postService.deletePost(postId, user.getUserName());
         });
 
         assertEquals(ErrorCode.POST_NOT_FOUND, appException.getErrorCode());
