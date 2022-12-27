@@ -32,7 +32,7 @@ LINK : http://ec2-52-79-234-25.ap-northeast-2.compute.amazonaws.com:8080/swagger
 | POST | DELETE |       api/v1/posts/{id}       |        게시글 삭제         |
 
 ## 📔 Endpoint Example
-### 회원 가입 [POST] /api/v1/join
+### 회원 가입 [POST] /api/v1/users/join
 
 **request body**
 ```json
