@@ -1,6 +1,6 @@
 package com.likelion.mutsasns.controller;
 
-import com.likelion.mutsasns.domain.dto.request.post.PostSaveRequest;
+import com.likelion.mutsasns.domain.dto.request.post.PostRequest;
 import com.likelion.mutsasns.domain.dto.response.Response;
 import com.likelion.mutsasns.domain.dto.response.post.PostResponse;
 import com.likelion.mutsasns.domain.dto.response.post.PostSaveResponse;
@@ -34,12 +34,12 @@ public class PostApiController {
     }
 
     @PostMapping
-    public Response<PostSaveResponse> save(@RequestBody PostSaveRequest request, @ApiIgnore Authentication authentication){
+    public Response<PostSaveResponse> save(@RequestBody PostRequest request, @ApiIgnore Authentication authentication){
         return Response.success(postService.createPost(request, authentication.getName()));
     }
 
     @PutMapping("/{id}")
-    public Response<PostSaveResponse> update(@PathVariable Integer id, @RequestBody PostSaveRequest request, @ApiIgnore Authentication authentication){
+    public Response<PostSaveResponse> update(@PathVariable Integer id, @RequestBody PostRequest request, @ApiIgnore Authentication authentication){
         return Response.success(postService.updatePost(id, request, authentication.getName()));
     }
 

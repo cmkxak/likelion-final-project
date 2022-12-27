@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class PostSaveRequest {
+public class PostRequest {
     private String title;
     private String body;
 }

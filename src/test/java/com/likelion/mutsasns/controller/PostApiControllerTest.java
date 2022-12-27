@@ -1,7 +1,7 @@
 package com.likelion.mutsasns.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.likelion.mutsasns.domain.dto.request.post.PostSaveRequest;
+import com.likelion.mutsasns.domain.dto.request.post.PostRequest;
 import com.likelion.mutsasns.domain.dto.response.post.PostResponse;
 import com.likelion.mutsasns.domain.dto.response.post.PostSaveResponse;
 import com.likelion.mutsasns.exception.AppException;
@@ -39,7 +39,7 @@ class PostApiControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    PostSaveRequest saveRequest = PostSaveRequest.builder()
+    PostRequest saveRequest = PostRequest.builder()
             .title("새로운 제목")
             .body("내용입니다.")
             .build();
@@ -87,7 +87,6 @@ class PostApiControllerTest {
     @Test
     @DisplayName("포스트 작성 실패 - Bearer Token이 아닌 경우")
     @WithAnonymousUser
-        //인증 되지 않은 상태
     void create_post_fail_not_bearer_token() throws Exception {
         when(postService.createPost(any(), any())).thenThrow(new AppException(ErrorCode.INVALID_TOKEN, ErrorCode.INVALID_TOKEN.getMessage()));
 
