@@ -29,9 +29,13 @@ public class UserService {
 
         String encPassword = passwordEncoder.encode(password);
 
-        User savedUser = userRepository.save(User.registerUser(userName, encPassword));
+        User user = User.builder()
+                .userName(userName)
+                .password(encPassword)
+                .role(UserRole.USER)
+                .build();
 
-        return savedUser;
+        return userRepository.save(user);
     }
 
     public String login(String userName, String password) {
