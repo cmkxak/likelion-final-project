@@ -31,8 +31,8 @@ LINK : http://ec2-52-79-234-25.ap-northeast-2.compute.amazonaws.com:8080/swagger
 | POST |  PUT   |       api/v1/posts/{id}       |        게시글 수정         |
 | POST | DELETE |       api/v1/posts/{id}       |        게시글 삭제         |
 
-### 📔 Endpoint Example
-**회원 가입 [POST] /api/v1/join**
+## 📔 Endpoint Example
+### 회원 가입 [POST] /api/v1/join
 
 **request body**
 ```json
@@ -53,7 +53,7 @@ LINK : http://ec2-52-79-234-25.ap-northeast-2.compute.amazonaws.com:8080/swagger
 }
 ```
 
-**로그인 [POST] /api/v1/users/login**
+### 로그인 [POST] /api/v1/users/login
 
 **request body**
 ```json
@@ -73,7 +73,7 @@ LINK : http://ec2-52-79-234-25.ap-northeast-2.compute.amazonaws.com:8080/swagger
 }
 ```
 
-**게시글 리스트 조회 [GET] /api/v1/posts**
+### 게시글 리스트 조회 [GET] /api/v1/posts
 
 **response body**
 ```json
@@ -126,7 +126,7 @@ LINK : http://ec2-52-79-234-25.ap-northeast-2.compute.amazonaws.com:8080/swagger
     }
 }
 ```
-**게시글 상세 조회 [GET] /api/v1/posts/{id}**
+### 게시글 상세 조회 [GET] /api/v1/posts/{id}
 
 **response body**
 
@@ -143,7 +143,7 @@ LINK : http://ec2-52-79-234-25.ap-northeast-2.compute.amazonaws.com:8080/swagger
     }
 }
 ```
-**게시글 등록 [POST] /api/v1/posts**
+### 게시글 등록 [POST] /api/v1/posts
 
 **request body**
 
@@ -163,7 +163,7 @@ LINK : http://ec2-52-79-234-25.ap-northeast-2.compute.amazonaws.com:8080/swagger
     }
 }
 ```
-**게시글 수정 [PUT] /api/v1/posts/{id}**
+### 게시글 수정 [PUT] /api/v1/posts/{id}
 
 **request body**
 ```json
@@ -182,7 +182,7 @@ LINK : http://ec2-52-79-234-25.ap-northeast-2.compute.amazonaws.com:8080/swagger
     }
 }
 ```
-**게시글 삭제 [DELETE] /api/v1/posts/{id}**
+### 게시글 삭제 [DELETE] /api/v1/posts/{id}
 
 **response body**
 ```json
@@ -195,7 +195,7 @@ LINK : http://ec2-52-79-234-25.ap-northeast-2.compute.amazonaws.com:8080/swagger
 }
 ```
 
-**유저 권한 변경 [POST] /api/v1/{id}/role/change**
+### 유저 권한 변경 [POST] /api/v1/{id}/role/change
 
 **request body**
 ```json
