@@ -27,14 +27,22 @@ public class SecurityConfig {
     };
 
     private final JwtTokenProvider tokenProvider;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 .httpBasic().disable()
                 .csrf().disable()
-                .cors().and()
+                .cors()
 
+                .and()
+                .exceptionHandling()
+                .accessDeniedHandler(jwtAccessDeniedHandler)
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+
+                .and()
                 .authorizeRequests()
                 .antMatchers(PERMIT_URL).permitAll()
                 .antMatchers(PERMIT_URL_SWAGGER).permitAll()
