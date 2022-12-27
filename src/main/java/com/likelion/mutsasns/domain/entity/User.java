@@ -28,6 +28,14 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    public static User registerUser(String userName, String password){
+        return User.builder()
+                .userName(userName)
+                .password(password)
+                .role(UserRole.USER)
+                .build();
+    }
+
     public void changeRole(UserRole role){
         this.role = role;
     }

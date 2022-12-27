@@ -28,12 +28,7 @@ public class UserService {
         validateDuplicateUser(userName);
 
         String encPassword = passwordEncoder.encode(password);
-
-        User user = User.builder()
-                .userName(userName)
-                .password(encPassword)
-                .role(UserRole.USER)
-                .build();
+        User user = User.registerUser(userName, encPassword);
 
         return userRepository.save(user);
     }
