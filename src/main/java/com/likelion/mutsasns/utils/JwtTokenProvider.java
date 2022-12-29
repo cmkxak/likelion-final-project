@@ -53,7 +53,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    //토큰의 유효성 검증
+    //토큰의 만료여부 검증
     public boolean isExpired(String token){
         Date expiredDate = extractClaims(token).getExpiration();
         return expiredDate.before(new Date());
@@ -72,6 +72,8 @@ public class JwtTokenProvider {
     //인증 객체 생성
     public Authentication getAuthentication(String token){
         UserDetails userDetails = userDetailsService.loadUserByUsername(getUserName(token));
-        return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), "", userDetails.getAuthorities());
+        log.info("[getAuthentication userDetails.getUsername : {}]", userDetails.getUsername());
+        userDetails.getAuthorities().stream().forEach(userAuth -> log.info("[getAuentication Userdetails.getGrantedAuthorities = {}]", userAuth.getAuthority()));
+        return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), "", userDetails.getAuthorities()); //userName, Role이 담기도록 구현
     }
 }

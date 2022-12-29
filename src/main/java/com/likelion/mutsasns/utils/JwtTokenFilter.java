@@ -25,16 +25,17 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     //실제 필터링 로직 : Jwt Token의 Authentication 정보를 현재 실행 중인 Security Context에 저장하기 위함
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        //Token을 가지고 와줍니다.
-        String jwt = resolveToken(request);
-        log.info("[doFilterInternal] token 값 추출완료. token : {}", jwt);
+        String jwt = resolveToken(request); // 요청 header에서 Token 꺼내줌
 
-        log.info("[doFilterInternal] token 값 만료 여부 체크");
-        if(StringUtils.hasText(jwt) && !tokenProvider.isExpired(jwt)){
-            Authentication authentication = tokenProvider.getAuthentication(jwt);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        log.info("===[doFilterInternal] token 값 추출 완료 - 토큰 : {}===", jwt);
+
+        log.info("===[doFilterInternal] token 값 만료 여부 체크 시작 (토큰 검증 로직)===" );
+        if(StringUtils.hasText(jwt) && !tokenProvider.isExpired(jwt)){ //토큰이 존재하고, 만료되지 않았으면
+            Authentication authentication = tokenProvider.getAuthentication(jwt); //tokenProvider를 통해 인증 객체가 생성되도록 구현
+            SecurityContextHolder.getContext().setAuthentication(authentication); //인증 객체를 SecurityContextHolder에 저장
+            log.info("authentication 객체 : {}", authentication);
         }
-        log.info("[doFilterInternal] token 값 만료 여부 체크 성공 및 SecurityContextHolder에 토큰 저장 완료");
+        log.info("===[doFilterInternal] token 값 만료 여부 체크 종료===");
 
         filterChain.doFilter(request, response);
     }
