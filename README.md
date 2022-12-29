@@ -15,7 +15,7 @@ MutsaSNS는 멋쟁이 사자처럼 백엔드 스쿨 2기 파이널 프로젝트 
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white)
 
 ## 📃 SWAGGER
-LINK : http://ec2-52-79-234-25.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui/
+LINK : http://ec2-15-164-104-27.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui/
 
 ## 📔 Endpoints
 |  구분  |  HTTP  |              URI              |          설명           |
@@ -213,19 +213,19 @@ LINK : http://ec2-52-79-234-25.ap-northeast-2.compute.amazonaws.com:8080/swagger
 ```
 
 ## 📃미션 요구사항 분석 & 체크리스트
-
 ### 체크리스트
 - [x] 인증/인가 필터 구현
 - [x] 로그인/회원가입 API 구현
 - [x] 게시글 조회/등록/수정/삭제 API 구현
-- [x] Gitlab을 통한 CI/CD 구축
 - [x] Swagger
 - [x] ADMIN 회원의 등급 변경 기능
 - [x] ADMIN 회원의 게시글 수정/삭제 구현
 
+- [x] Gitlab을 통한 CI/CD 구축
+- [ ] 화면 UI 개발 
+
 ### 1주차 미션 요약
 **[접근 방법]**
-
 ---
 - [x] **[인증/인가 필터 구현]**
 - RESTful 애플리케이션의 인증/인가 처리를 위해 UsernamePasswordAuthenticationFilter 앞에 커스텀 필터 배치
