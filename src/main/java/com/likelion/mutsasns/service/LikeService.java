@@ -26,16 +26,13 @@ public class LikeService {
 
     @Transactional
     public String createLike(Integer postId, String userName) {
-        User user = finduser(userName);
-        Post post = findPost(postId);
-        validateDuplicateLike(user, post); //좋아요 중복 처리
-        likeRepository.save(Like.createLike(post, user));
+        validateDuplicateLike(findUser(userName), findPost(postId));
+        likeRepository.save(Like.createLike(findPost(postId), findUser(userName)));
         return SUCCESS_LIKE_MESSAGE;
     }
 
     public Long countLike(Integer postId) {
-        Post post = findPost(postId);
-        return likeRepository.countByPost(post);
+        return likeRepository.countByPost(findPost(postId));
     }
 
     private void validateDuplicateLike(User user, Post post) {
@@ -44,7 +41,7 @@ public class LikeService {
         });
     }
 
-    private User finduser(String userName) {
+    private User findUser(String userName) {
         return userRepository.findByUserName(userName).orElseThrow(() ->
                 new AppException(ErrorCode.USERNAME_NOT_FOUND, ErrorCode.USERNAME_NOT_FOUND.getMessage()));
     }
