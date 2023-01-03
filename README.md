@@ -249,7 +249,7 @@ LINK : http://ec2-15-164-104-27.ap-northeast-2.compute.amazonaws.com:8080/swagge
 
 - [x] **[Gitlab을 통한 CI/CD 구축]**
 - docker build와 push가 가능하도록 작성한 DockerFile을 통한 docker build 및 push 자동화
-- 배포 서버(AWS EC2)에 Linux 기능인, Crontab을 통한 Container Registry(Gitlab)에 변경 사항 반영 자동화
+- 배포 서버(AWS EC2)에 Linux 기능인, Crontab을 통한 Container Registry(Gitlab)의 변경 사항 반영 자동화
 
 
 - [x] **[Swagger]**
@@ -280,7 +280,7 @@ LINK : http://ec2-15-164-104-27.ap-northeast-2.compute.amazonaws.com:8080/swagge
   <br>
 
 > 게시글 삭제
-- 인자로 넘어온, postId와 userName을 활용하여 작성자와 삭제 요청자가 동등성 검증 로직 구현
+- 인자로 넘어온, postId와 userName을 활용하여 작성자와 삭제 요청자의 동등성 검증 로직 구현
 - ADMIN의 경우, 게시글의 삭제가 가능하도록 구현
 - 위의 두가지 경우가 아니면, 권한이 없다는 에러가 반환되도록 구현
   <br>
@@ -295,7 +295,7 @@ LINK : http://ec2-15-164-104-27.ap-northeast-2.compute.amazonaws.com:8080/swagge
 - 테스트 코드를 설계함에 있어, 컨트롤러 테스트 코드와 서비스 테스트 코드의 확실한 차이를 아직 잘 모르겠다.
   <br>
 
-- TDD라 함은, 테스트 코드를 먼저 개발하고, 작성된 테스트 코드를 바탕으로 실제 로직을 작성하는 순서로 알고 있다. 각 계층의 모든 테스트 코드를 작성하며 개발하는데에 많은 노력이 들어 갈 것 같은데, 주로 어떤 계층이 먼저 개발되는지 궁금하다. (혹은 보통 어떤 계층이 먼저 개발되는지)
+- TDD라 함은, 테스트 코드를 먼저 개발하고, 작성된 테스트 코드를 바탕으로 실제 로직을 작성하는 순서로 알고 있다. 각 계층의 모든 테스트 코드를 작성하며 개발하는데에 많은 노력이 들어 갈 것 같은데, 주로 어떤 계층이 먼저 개발되는지 궁금하다. (혹은 개발 순서에 관한 관례가 있는지?)
   <br>
 
 - 화면 개발 UI를 하지 못해 아쉽다. 리액트를 활용하여 FRONT-END도 구축해봐야 겠다.
