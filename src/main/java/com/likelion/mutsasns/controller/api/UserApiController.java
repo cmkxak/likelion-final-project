@@ -1,4 +1,4 @@
-package com.likelion.mutsasns.controller;
+package com.likelion.mutsasns.controller.api;
 
 import com.likelion.mutsasns.domain.dto.request.user.UserChangeRoleRequest;
 import com.likelion.mutsasns.domain.dto.request.user.UserJoinRequest;

@@ -1,6 +1,7 @@
 package com.likelion.mutsasns.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.likelion.mutsasns.controller.api.PostApiController;
 import com.likelion.mutsasns.domain.dto.request.post.PostRequest;
 import com.likelion.mutsasns.domain.dto.response.post.PostResponse;
 import com.likelion.mutsasns.domain.dto.response.post.PostSaveResponse;

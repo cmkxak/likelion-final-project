@@ -1,6 +1,7 @@
 package com.likelion.mutsasns.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.likelion.mutsasns.controller.api.UserApiController;
 import com.likelion.mutsasns.domain.dto.request.user.UserJoinRequest;
 import com.likelion.mutsasns.domain.dto.request.user.UserLoginRequest;
 import com.likelion.mutsasns.domain.entity.User;
