@@ -163,6 +163,21 @@ class CommentApiControllerTest {
     @WithMockUser
     void comment_update_fail2() throws Exception {
         given(commentService.updateComment(any(), any(), any(), any()))
+                .willThrow(new AppException(ErrorCode.POST_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage()));
+
+        mockMvc.perform(put("/api/v1/posts/1/comments/1")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(commentRequest)))
+                .andDo(print())
+                .andExpect(status().is(ErrorCode.POST_NOT_FOUND.getHttpStatus().value()));
+    }
+
+    @Test
+    @DisplayName("댓글 수정 실패 - 작성자 불일치")
+    @WithMockUser
+    void comment_update_fail3() throws Exception {
+        given(commentService.updateComment(any(), any(), any(), any()))
                 .willThrow(new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage()));
 
         mockMvc.perform(put("/api/v1/posts/1/comments/1")
@@ -176,7 +191,7 @@ class CommentApiControllerTest {
     @Test
     @DisplayName("댓글 수정 실패 - 데이터베이스 에러")
     @WithMockUser
-    void comment_update_fail3() throws Exception {
+    void comment_update_fail4() throws Exception {
         given(commentService.updateComment(any(), any(), any(), any()))
                 .willThrow(new AppException(ErrorCode.DATABASE_ERROR, ErrorCode.DATABASE_ERROR.getMessage()));
 
@@ -214,9 +229,22 @@ class CommentApiControllerTest {
     }
 
     @Test
-    @DisplayName("댓글 삭제 실패 - 데이터베이스 에러")
+    @DisplayName("댓글 삭제 실패 - 포스트가 없는 경우")
     @WithMockUser
     void comment_delete_fail2() throws Exception {
+        given(commentService.deleteComment(any(), any(), any()))
+                .willThrow(new AppException(ErrorCode.POST_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage()));
+
+        mockMvc.perform(delete("/api/v1/posts/1/comments/1")
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().is(ErrorCode.POST_NOT_FOUND.getHttpStatus().value()));
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 실패 - 데이터베이스 에러")
+    @WithMockUser
+    void comment_delete_fail3() throws Exception {
         given(commentService.deleteComment(any(), any(), any()))
                 .willThrow(new AppException(ErrorCode.DATABASE_ERROR, ErrorCode.DATABASE_ERROR.getMessage()));
 
@@ -229,7 +257,7 @@ class CommentApiControllerTest {
     @Test
     @DisplayName("댓글 삭제 실패 - 작성자 불일치")
     @WithMockUser
-    void comment_delete_fail3() throws Exception {
+    void comment_delete_fail4() throws Exception {
         given(commentService.deleteComment(any(), any(), any()))
                 .willThrow(new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage()));
 
