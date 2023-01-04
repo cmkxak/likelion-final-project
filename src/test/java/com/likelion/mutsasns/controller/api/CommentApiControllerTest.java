@@ -159,7 +159,7 @@ class CommentApiControllerTest {
     }
 
     @Test
-    @DisplayName("댓글 수정 실패 - 작성자 불일치")
+    @DisplayName("댓글 수정 실패 - 포스트가 없는 경우")
     @WithMockUser
     void comment_update_fail2() throws Exception {
         given(commentService.updateComment(any(), any(), any(), any()))
