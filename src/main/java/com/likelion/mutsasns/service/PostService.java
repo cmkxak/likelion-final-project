@@ -39,6 +39,12 @@ public class PostService {
         return PostResponse.of(findPost);
     }
 
+    public Page<PostResponse> findOwn(String userName, Pageable pageable) {
+        User user = validateUserByToken(userName);
+        Page<Post> myPosts = postRepository.findAllByUserId(user.getId(), pageable);
+        return PostResponse.of(myPosts);
+    }
+
     @Transactional
     public PostSaveResponse createPost(PostRequest request, String userName) {
         User findUser = validateUserByToken(userName);

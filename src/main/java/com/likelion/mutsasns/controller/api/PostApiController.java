@@ -33,6 +33,11 @@ public class PostApiController {
         return Response.success(postService.findOne(id));
     }
 
+    @GetMapping("/my")
+    public Response findOwn(@ApiIgnore Authentication authentication, @PageableDefault(size=20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+        return Response.success(postService.findOwn(authentication.getName(), pageable));
+    }
+
     @PostMapping
     public Response<PostSaveResponse> save(@RequestBody PostRequest request, @ApiIgnore Authentication authentication){
         return Response.success(postService.createPost(request, authentication.getName()));
