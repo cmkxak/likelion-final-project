@@ -18,6 +18,5 @@ public class CommentDeleteResponse {
                 .message(message)
                 .id(commentId)
                 .build();
-
     }
 }
