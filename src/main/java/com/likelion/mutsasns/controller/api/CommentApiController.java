@@ -8,6 +8,7 @@ import com.likelion.mutsasns.domain.dto.response.comment.CommentModifyResponse;
 import com.likelion.mutsasns.domain.dto.response.comment.CommentResponse;
 import com.likelion.mutsasns.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,7 +16,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+import javax.validation.Valid;
 
+@Slf4j
 @RequestMapping("/api/v1/posts")
 @RequiredArgsConstructor
 @RestController
@@ -33,8 +36,9 @@ public class CommentApiController {
     @PostMapping("/{postId}/comments")
     public Response<CommentCreateResponse> createComment(
             @PathVariable("postId") Integer postId,
-            @RequestBody CommentRequest request,
+            @Valid @RequestBody CommentRequest request,
             @ApiIgnore Authentication authentication) {
+        log.info(request.toString());
         return Response.success(commentService.createComment(postId, request, authentication.getName()));
     }
 
@@ -42,8 +46,9 @@ public class CommentApiController {
     public Response<CommentModifyResponse> updateComment(
             @PathVariable("postId") Integer postId,
             @PathVariable("id") Integer commentId,
-            @RequestBody CommentRequest request,
+            @Valid @RequestBody CommentRequest request,
             @ApiIgnore Authentication authentication) {
+        log.info(request.toString());
         return Response.success(commentService.updateComment(postId, commentId, request, authentication.getName()));
     }
 

@@ -37,7 +37,7 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public Page<CommentResponse> findAll(Integer postId, Pageable pageable) {
-        findPost(postId);
+        validatePostExists(postId);
         return CommentResponse.of(commentRepository.findAllByPostId(postId, pageable));
     }
 
@@ -50,16 +50,17 @@ public class CommentService {
     }
 
     public CommentModifyResponse updateComment(Integer postId, Integer commentId, CommentRequest request, String userName) {
-        findPost(postId);
-        Comment comment = validateAuthorizedUser(commentId, userName);
+        validatePostExists(postId);
+        Comment comment = findCommentByUserAuthority(commentId, userName);
         comment.updateComment(request.getComment());
         return CommentModifyResponse.of(comment);
     }
 
     public CommentDeleteResponse deleteComment(Integer postId, Integer commentId, String userName) {
-        findPost(postId);
-        validateAuthorizedUser(commentId, userName);
-        commentRepository.deleteById(commentId);
+        validatePostExists(postId);
+        if (isAuthorizedUser(commentId, userName)){
+            commentRepository.deleteById(commentId);
+        }
         return CommentDeleteResponse.of(DELETE_COMMENT_MESSAGE, commentId);
     }
 
@@ -67,12 +68,26 @@ public class CommentService {
         alarmRepository.save(Alarm.createAlarm(postId, user.getId(), AlarmType.NEW_COMMENT_ON_POST.getMessage(), AlarmType.NEW_COMMENT_ON_POST));
     }
 
-    private Comment validateAuthorizedUser(Integer commentId, String userName) {
+    private Comment findCommentByUserAuthority(Integer commentId, String userName) {
         User findUser = findUser(userName);
         Comment comment = findComment(commentId);
         if (Objects.equals(comment.getUser().getId(), findUser.getId()))
             return comment;
         else throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
+    }
+
+    private boolean isAuthorizedUser(Integer commentId, String userName){
+        User findUser = findUser(userName);
+        Comment comment = findComment(commentId);
+        if (Objects.equals(comment.getUser().getId(), findUser.getId()))
+            return true;
+        else throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
+    }
+
+    private void validatePostExists(Integer postId){
+        if(!postRepository.existsById(postId)){
+            throw new AppException(ErrorCode.POST_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage());
+        }
     }
 
     private User findUser(String userName) {
