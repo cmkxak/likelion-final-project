@@ -20,11 +20,11 @@ public class Comment extends BaseEntity{
 
     private String comment;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id") //Comment 엔티티에 존재하는 post 필드를 어떤 이름으로 Comment 테이블에 나타날 지 컬럼명을 지정할지 나타내는 것
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
