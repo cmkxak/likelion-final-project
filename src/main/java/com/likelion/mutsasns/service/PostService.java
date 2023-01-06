@@ -17,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -35,62 +37,53 @@ public class PostService {
     }
 
     public PostResponse findOne(Integer id) {
-        Post findPost = postRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.POST_NOT_FOUND, ""));
-        return PostResponse.of(findPost);
+        return PostResponse.of(findPost(id));
     }
 
     public Page<PostResponse> findOwn(String userName, Pageable pageable) {
-        User user = validateUserByToken(userName);
+        User user = findUser(userName);
         Page<Post> myPosts = postRepository.findAllByUserId(user.getId(), pageable);
         return PostResponse.of(myPosts);
     }
 
     @Transactional
     public PostSaveResponse createPost(PostRequest request, String userName) {
-        User findUser = validateUserByToken(userName);
-
+        User findUser = findUser(userName);
         Post newPost = Post.createPost(request.getTitle(), request.getBody(), findUser);
-
         Post savedPost = postRepository.save(newPost);
-
         return new PostSaveResponse(SUCCESS_MESSAGE, savedPost.getId());
     }
 
 
     @Transactional
     public PostSaveResponse updatePost(Integer postId, PostRequest request, String userName) {
-        validateCorrectPost(postId, userName);
-
-        Post findPost = postRepository.findById(postId).orElseThrow(() ->
-                new AppException(ErrorCode.POST_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage()));
-
+        Post findPost = findPostByAuthorizedUser(postId, userName);
         findPost.updatePost(request.getTitle(), request.getBody());
-
         return new PostSaveResponse(UPDATE_MESSAGE, findPost.getId());
     }
 
     @Transactional
     public PostSaveResponse deletePost(Integer postId, String userName) {
-        Post post = validateCorrectPost(postId, userName);
-        post.deletePost(); //변경 감지로 soft delete 구현
+        Post post = findPostByAuthorizedUser(postId, userName);
+        post.deletePost();
         return new PostSaveResponse(DELETE_MESSAGE, postId);
     }
 
-    private Post validateCorrectPost(Integer postId, String userName) {
-        User findUser = userRepository.findByUserName(userName).orElseThrow(() ->
-                new AppException(ErrorCode.USERNAME_NOT_FOUND, ErrorCode.USERNAME_NOT_FOUND.getMessage()));
+    private Post findPostByAuthorizedUser(Integer postId, String userName) {
+        User user = findUser(userName);
+        Post post = findPost(postId);
 
-        Post post = postRepository.findById(postId).orElseThrow(() ->
-                new AppException(ErrorCode.POST_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage()));
-
-        if (post.getUser().getId() == findUser.getId() || findUser.getRole() == UserRole.ADMIN) {
+        if(Objects.equals(post.getUser().getId(), user.getId()) || Objects.equals(user.getRole(), UserRole.ADMIN))
             return post;
-        } else {
-            throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
-        }
+        else throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_TOKEN.getMessage());
     }
 
-    private User validateUserByToken(String userName) {
+    private Post findPost(Integer postId) {
+        return postRepository.findById(postId).orElseThrow(() ->
+                new AppException(ErrorCode.POST_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage()));
+    }
+
+    private User findUser(String userName) {
         return userRepository.findByUserName(userName).orElseThrow(() ->
                 new AppException(ErrorCode.USERNAME_NOT_FOUND, ErrorCode.USERNAME_NOT_FOUND.getMessage()));
     }
