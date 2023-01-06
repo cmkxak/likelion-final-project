@@ -1,10 +1,13 @@
 package com.likelion.mutsasns.service;
 
+import com.likelion.mutsasns.domain.entity.Alarm;
 import com.likelion.mutsasns.domain.entity.Like;
 import com.likelion.mutsasns.domain.entity.Post;
 import com.likelion.mutsasns.domain.entity.User;
+import com.likelion.mutsasns.enumerate.AlarmType;
 import com.likelion.mutsasns.exception.AppException;
 import com.likelion.mutsasns.exception.ErrorCode;
+import com.likelion.mutsasns.repository.AlarmRepository;
 import com.likelion.mutsasns.repository.LikeRepository;
 import com.likelion.mutsasns.repository.PostRepository;
 import com.likelion.mutsasns.repository.UserRepository;
@@ -23,20 +26,28 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final AlarmRepository alarmRepository;
 
     @Transactional
     public String createLike(Integer postId, String userName) {
         validateDuplicateLike(findUser(userName), findPost(postId));
         likeRepository.save(Like.createLike(findPost(postId), findUser(userName)));
+        saveNewLikeAlarm(postId, userName);
         return SUCCESS_LIKE_MESSAGE;
     }
+
 
     public Long countLike(Integer postId) {
         return likeRepository.countByPost(findPost(postId));
     }
 
+    private void saveNewLikeAlarm(Integer postId, String userName) {
+        alarmRepository.save(Alarm.createAlarm(postId, findUser(userName).getId(),
+                AlarmType.NEW_LIKE_ON_POST.getMessage(), AlarmType.NEW_LIKE_ON_POST));
+    }
+
     private void validateDuplicateLike(User user, Post post) {
-        likeRepository.findByUserAndPost(user, post).ifPresent(like -> {
+         likeRepository.findByUserAndPost(user, post).ifPresent(like -> {
             throw new AppException(ErrorCode.DUPLICATED_USER_NAME, DUPLICATE_LIKE_MESSAGE);
         });
     }
