@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class CommentResponse {
+public class CommentModifyResponse {
     private Integer id;
     private String comment;
     private String userName;
@@ -23,14 +23,29 @@ public class CommentResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
-    public static Page<CommentResponse> of(Page<Comment> comments) {
-        return comments.map(comment -> CommentResponse.builder()
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastModifiedAt;
+
+    public static Page<CommentModifyResponse> of(Page<Comment> comments) {
+        return comments.map(comment -> CommentModifyResponse.builder()
                 .id(comment.getId())
                 .comment(comment.getComment())
                 .userName(comment.getUser().getUserName())
                 .postId(comment.getPost().getId())
                 .createdAt(comment.getCreatedAt())
+                .lastModifiedAt(comment.getLastModifiedAt())
                 .build()
         );
+    }
+
+    public static CommentModifyResponse of(Comment savedComment) {
+        return CommentModifyResponse.builder()
+                .id(savedComment.getId())
+                .comment(savedComment.getComment())
+                .userName(savedComment.getUser().getUserName())
+                .postId(savedComment.getPost().getId())
+                .createdAt(savedComment.getCreatedAt())
+                .lastModifiedAt(savedComment.getLastModifiedAt())
+                .build();
     }
 }

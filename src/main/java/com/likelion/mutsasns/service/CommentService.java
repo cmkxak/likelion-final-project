@@ -1,7 +1,9 @@
 package com.likelion.mutsasns.service;
 
 import com.likelion.mutsasns.domain.dto.request.comment.CommentRequest;
+import com.likelion.mutsasns.domain.dto.response.comment.CommentCreateResponse;
 import com.likelion.mutsasns.domain.dto.response.comment.CommentDeleteResponse;
+import com.likelion.mutsasns.domain.dto.response.comment.CommentModifyResponse;
 import com.likelion.mutsasns.domain.dto.response.comment.CommentResponse;
 import com.likelion.mutsasns.domain.entity.Alarm;
 import com.likelion.mutsasns.domain.entity.Comment;
@@ -39,19 +41,19 @@ public class CommentService {
         return CommentResponse.of(commentRepository.findAllByPostId(postId, pageable));
     }
 
-    public CommentResponse createComment(Integer postId, CommentRequest request, String userName) {
+    public CommentCreateResponse createComment(Integer postId, CommentRequest request, String userName) {
         Post post = findPost(postId);
         User user = findUser(userName);
         Comment savedComment = commentRepository.save(Comment.createComment(request.getComment(), post, user));
         saveNewCommentAlarm(postId, user);
-        return CommentResponse.of(savedComment);
+        return CommentCreateResponse.of(savedComment);
     }
 
-    public CommentResponse updateComment(Integer postId, Integer commentId, CommentRequest request, String userName) {
+    public CommentModifyResponse updateComment(Integer postId, Integer commentId, CommentRequest request, String userName) {
         findPost(postId);
         Comment comment = validateAuthorizedUser(commentId, userName);
         comment.updateComment(request.getComment());
-        return CommentResponse.of(comment);
+        return CommentModifyResponse.of(comment);
     }
 
     public CommentDeleteResponse deleteComment(Integer postId, Integer commentId, String userName) {

@@ -2,7 +2,9 @@ package com.likelion.mutsasns.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.likelion.mutsasns.domain.dto.request.comment.CommentRequest;
+import com.likelion.mutsasns.domain.dto.response.comment.CommentCreateResponse;
 import com.likelion.mutsasns.domain.dto.response.comment.CommentDeleteResponse;
+import com.likelion.mutsasns.domain.dto.response.comment.CommentModifyResponse;
 import com.likelion.mutsasns.domain.dto.response.comment.CommentResponse;
 import com.likelion.mutsasns.domain.entity.Post;
 import com.likelion.mutsasns.domain.entity.User;
@@ -55,13 +57,6 @@ class CommentApiControllerTest {
     Post post = new Post(1, "글 제목", "글 내용", user);
 
     CommentRequest commentRequest = new CommentRequest("댓글 작성");
-    CommentResponse commentResponse = CommentResponse.builder()
-            .id(1)
-            .userName(user.getUserName())
-            .comment("댓글 작성 완료.")
-            .createdAt(LocalDateTime.now())
-            .postId(post.getId())
-            .build();
 
     @Test
     @DisplayName("댓글 목록 조회 성공")
@@ -69,6 +64,13 @@ class CommentApiControllerTest {
     void comment_list_success() throws Exception {
         CommentFixture commentFixture = new CommentFixture(1,"댓글", post, user);
         Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+        CommentResponse commentResponse = CommentResponse.builder()
+                .id(1)
+                .userName(user.getUserName())
+                .comment("댓글 작성 완료.")
+                .createdAt(LocalDateTime.now())
+                .postId(post.getId())
+                .build();
 
         given(commentService.findAll(any(), any(Pageable.class)))
                 .willReturn(CommentResponse.of(new PageImpl<>(List.of(commentFixture.createComment()))));
@@ -85,8 +87,16 @@ class CommentApiControllerTest {
     @DisplayName("댓글 작성 성공")
     @WithMockUser
     public void comment_success() throws Exception {
+        CommentCreateResponse commentCreateResponse = CommentCreateResponse.builder()
+                .id(1)
+                .userName(user.getUserName())
+                .comment("댓글 작성 완료.")
+                .createdAt(LocalDateTime.now())
+                .postId(post.getId())
+                .build();
+
         given(commentService.createComment(any(), any(), any()))
-                .willReturn(commentResponse);
+                .willReturn(commentCreateResponse);
 
         mockMvc.perform(post("/api/v1/posts/1/comments")
                         .with(csrf())
@@ -133,8 +143,16 @@ class CommentApiControllerTest {
     @DisplayName("댓글 수정 성공")
     @WithMockUser
     void comment_update_success() throws Exception {
+        CommentModifyResponse commentModifyResponse = CommentModifyResponse.builder()
+                .id(1)
+                .userName(user.getUserName())
+                .comment("댓글 작성 완료.")
+                .createdAt(LocalDateTime.now())
+                .postId(post.getId())
+                .build();
+
         given(commentService.updateComment(any(), any(), any(), any()))
-                .willReturn(commentResponse);
+                .willReturn(commentModifyResponse);
 
         mockMvc.perform(put("/api/v1/posts/1/comments/1")
                         .with(csrf())
