@@ -25,4 +25,8 @@ public class BaseEntity {
     private LocalDateTime lastModifiedAt;
 
     private LocalDateTime deletedAt;
+
+    public void setDeletedAt(LocalDateTime deletedAt){
+        this.deletedAt = deletedAt;
+    }
 }

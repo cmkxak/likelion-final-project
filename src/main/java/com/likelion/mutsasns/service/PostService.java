@@ -71,18 +71,12 @@ public class PostService {
 
     @Transactional
     public PostSaveResponse deletePost(Integer postId, String userName) {
-        validateCorrectPost(postId, userName);
-
-        try {
-            postRepository.deleteById(postId);
-        } catch (AppException e) {
-            e.printStackTrace();
-        }
-
+        Post post = validateCorrectPost(postId, userName);
+        post.deletePost(); //변경 감지로 soft delete 구현
         return new PostSaveResponse(DELETE_MESSAGE, postId);
     }
 
-    private boolean validateCorrectPost(Integer postId, String userName) {
+    private Post validateCorrectPost(Integer postId, String userName) {
         User findUser = userRepository.findByUserName(userName).orElseThrow(() ->
                 new AppException(ErrorCode.USERNAME_NOT_FOUND, ErrorCode.USERNAME_NOT_FOUND.getMessage()));
 
@@ -90,7 +84,7 @@ public class PostService {
                 new AppException(ErrorCode.POST_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage()));
 
         if (post.getUser().getId() == findUser.getId() || findUser.getRole() == UserRole.ADMIN) {
-            return true;
+            return post;
         } else {
             throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
         }
