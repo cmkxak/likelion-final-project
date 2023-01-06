@@ -24,6 +24,7 @@ public class Alarm extends BaseEntity{
 
     private String text;
 
+    @Enumerated(EnumType.STRING)
     private AlarmType alarmType;
 
     @ManyToOne
