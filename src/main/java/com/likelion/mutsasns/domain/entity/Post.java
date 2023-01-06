@@ -7,10 +7,12 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Where(clause = "deleted_at is null")
 @Getter
 @Entity
 public class Post extends BaseEntity {
@@ -38,5 +40,9 @@ public class Post extends BaseEntity {
     public void updatePost(String title, String body){
         this.title = title;
         this.body = body;
+    }
+
+    public void deletePost(){
+        this.setDeletedAt(LocalDateTime.now());
     }
 }
