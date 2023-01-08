@@ -37,7 +37,8 @@ public class PostService {
     }
 
     public PostResponse findOne(Integer id) {
-        return PostResponse.of(findPost(id));
+        Post post = findPost(id);
+        return PostResponse.of(post);
     }
 
     public Page<PostResponse> findOwn(String userName, Pageable pageable) {
@@ -53,7 +54,6 @@ public class PostService {
         Post savedPost = postRepository.save(newPost);
         return new PostSaveResponse(SUCCESS_MESSAGE, savedPost.getId());
     }
-
 
     @Transactional
     public PostSaveResponse updatePost(Integer postId, PostRequest request, String userName) {

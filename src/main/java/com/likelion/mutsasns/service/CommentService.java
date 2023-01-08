@@ -51,36 +51,28 @@ public class CommentService {
 
     public CommentModifyResponse updateComment(Integer postId, Integer commentId, CommentRequest request, String userName) {
         validatePostExists(postId);
-        Comment comment = findCommentByUserAuthority(commentId, userName);
+        Comment comment = findCommentByAuthorizedUser(commentId, userName);
         comment.updateComment(request.getComment());
         return CommentModifyResponse.of(comment);
     }
 
     public CommentDeleteResponse deleteComment(Integer postId, Integer commentId, String userName) {
         validatePostExists(postId);
-        if (isAuthorizedUser(commentId, userName)){
-            commentRepository.deleteById(commentId);
-        }
+        Comment comment = findCommentByAuthorizedUser(commentId, userName);
+        commentRepository.delete(comment);
         return CommentDeleteResponse.of(DELETE_COMMENT_MESSAGE, commentId);
     }
 
     private void saveNewCommentAlarm(Integer postId, User user) {
-        alarmRepository.save(Alarm.createAlarm(postId, user.getId(), AlarmType.NEW_COMMENT_ON_POST.getMessage(), AlarmType.NEW_COMMENT_ON_POST));
+        alarmRepository.save(Alarm.createAlarm(postId, user.getId(),
+                AlarmType.NEW_COMMENT_ON_POST.getMessage(), AlarmType.NEW_COMMENT_ON_POST));
     }
 
-    private Comment findCommentByUserAuthority(Integer commentId, String userName) {
+    private Comment findCommentByAuthorizedUser(Integer commentId, String userName) {
         User findUser = findUser(userName);
         Comment comment = findComment(commentId);
         if (Objects.equals(comment.getUser().getId(), findUser.getId()))
             return comment;
-        else throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
-    }
-
-    private boolean isAuthorizedUser(Integer commentId, String userName){
-        User findUser = findUser(userName);
-        Comment comment = findComment(commentId);
-        if (Objects.equals(comment.getUser().getId(), findUser.getId()))
-            return true;
         else throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
     }
 

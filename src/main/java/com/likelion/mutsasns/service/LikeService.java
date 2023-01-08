@@ -22,7 +22,6 @@ public class LikeService {
 
     private static final String SUCCESS_LIKE_MESSAGE = "좋아요를 눌렀습니다.";
     private static final String DUPLICATE_LIKE_MESSAGE = "이미 좋아요를 누른 유저입니다.";
-
     private final LikeRepository likeRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
@@ -30,15 +29,17 @@ public class LikeService {
 
     @Transactional
     public String createLike(Integer postId, String userName) {
-        validateDuplicateLike(findUser(userName), findPost(postId));
-        likeRepository.save(Like.createLike(findPost(postId), findUser(userName)));
+        User user = findUser(userName);
+        Post post = findPost(postId);
+        validateDuplicateLike(user, post);
+        likeRepository.save(Like.createLike(post, user));
         saveNewLikeAlarm(postId, userName);
         return SUCCESS_LIKE_MESSAGE;
     }
 
-
     public Long countLike(Integer postId) {
-        return likeRepository.countByPost(findPost(postId));
+        Post post = findPost(postId);
+        return likeRepository.countByPost(post);
     }
 
     private void saveNewLikeAlarm(Integer postId, String userName) {
