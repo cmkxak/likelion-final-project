@@ -7,6 +7,7 @@ import com.likelion.mutsasns.domain.dto.response.comment.CommentDeleteResponse;
 import com.likelion.mutsasns.domain.dto.response.comment.CommentModifyResponse;
 import com.likelion.mutsasns.domain.dto.response.comment.CommentResponse;
 import com.likelion.mutsasns.service.CommentService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ public class CommentApiController {
 
     private final CommentService commentService;
 
+    @ApiOperation(value = "댓글 리스트 조회", notes = "게시글에 생성된 모든 댓글을 조회한다.")
     @GetMapping("/{postId}/comments")
     public Response<Page<CommentResponse>> findAllComments(
             @PathVariable("postId") Integer postId,
@@ -33,6 +35,7 @@ public class CommentApiController {
         return Response.success(commentService.findAll(postId, pageable));
     }
 
+    @ApiOperation(value = "댓글 생성", notes = "특정 게시글의 댓글을 생성한다.")
     @PostMapping("/{postId}/comments")
     public Response<CommentCreateResponse> createComment(
             @PathVariable("postId") Integer postId,
@@ -42,6 +45,7 @@ public class CommentApiController {
         return Response.success(commentService.createComment(postId, request, authentication.getName()));
     }
 
+    @ApiOperation(value = "댓글 수정", notes = "특정 게시글의 댓글을 수정한다.")
     @PutMapping("/{postId}/comments/{id}")
     public Response<CommentModifyResponse> updateComment(
             @PathVariable("postId") Integer postId,
@@ -52,6 +56,7 @@ public class CommentApiController {
         return Response.success(commentService.updateComment(postId, commentId, request, authentication.getName()));
     }
 
+    @ApiOperation(value = "댓글 삭제", notes = "특정 게시글의 댓글을 삭제한다.")
     @DeleteMapping("/{postId}/comments/{id}")
     public Response<CommentDeleteResponse> deleteComment(
             @PathVariable("postId") Integer postId,
