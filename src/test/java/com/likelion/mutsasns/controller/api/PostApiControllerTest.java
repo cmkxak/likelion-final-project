@@ -1,24 +1,28 @@
 package com.likelion.mutsasns.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.likelion.mutsasns.controller.api.PostApiController;
 import com.likelion.mutsasns.domain.dto.request.post.PostRequest;
 import com.likelion.mutsasns.domain.dto.response.post.PostResponse;
 import com.likelion.mutsasns.domain.dto.response.post.PostSaveResponse;
 import com.likelion.mutsasns.exception.AppException;
 import com.likelion.mutsasns.exception.ErrorCode;
 import com.likelion.mutsasns.service.PostService;
+import com.likelion.mutsasns.support.PostFixture;
+import com.likelion.mutsasns.support.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -44,6 +48,22 @@ class PostApiControllerTest {
             .title("새로운 제목")
             .body("내용입니다.")
             .build();
+
+    @Test
+    @DisplayName("포스트 리스트 조회 성공")
+    @WithMockUser
+    void find_post_success() throws Exception {
+        UserFixture userFixture = new UserFixture();
+        PostFixture postFixture = new PostFixture(userFixture.createUser());
+
+        when(postService.findAllPost(any(Pageable.class)))
+                .thenReturn(PostResponse.of(new PageImpl<>(List.of(postFixture.createPost()))));
+
+        mockMvc.perform(get("/api/v1/posts")
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 
     @Test
     @DisplayName("포스트 상세 조회 성공")
@@ -225,5 +245,33 @@ class PostApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().is(ErrorCode.DATABASE_ERROR.getHttpStatus().value()));
+    }
+
+    @Test
+    @DisplayName("포스트 마이 피드 조회 성공")
+    @WithMockUser
+    void find_own_post_success() throws Exception {
+        UserFixture userFixture = new UserFixture();
+        PostFixture postFixture = new PostFixture(userFixture.createUser());
+
+        when(postService.findOwn(any(), any()))
+                .thenReturn(PostResponse.of(new PageImpl<>(List.of(postFixture.createPost()))));
+
+        mockMvc.perform(get("/api/v1/posts/my")
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("포스트 마이 피드 조회 실패 - 로그인 하지 않은 경우")
+    void find_own_post_fail() throws Exception {
+        when(postService.findOwn(any(), any()))
+                .thenThrow(new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage()));
+
+        mockMvc.perform(get("/api/v1/posts/my")
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().is(ErrorCode.INVALID_PERMISSION.getHttpStatus().value()));
     }
 }
