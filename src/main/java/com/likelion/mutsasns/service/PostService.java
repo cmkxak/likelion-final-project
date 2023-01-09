@@ -1,8 +1,10 @@
 package com.likelion.mutsasns.service;
 
 import com.likelion.mutsasns.domain.dto.request.post.PostRequest;
+import com.likelion.mutsasns.domain.dto.response.post.PostDeleteResponse;
 import com.likelion.mutsasns.domain.dto.response.post.PostResponse;
-import com.likelion.mutsasns.domain.dto.response.post.PostSaveResponse;
+import com.likelion.mutsasns.domain.dto.response.post.PostCreateResponse;
+import com.likelion.mutsasns.domain.dto.response.post.PostUpdateResponse;
 import com.likelion.mutsasns.domain.entity.Post;
 import com.likelion.mutsasns.domain.entity.User;
 import com.likelion.mutsasns.enumerate.UserRole;
@@ -48,25 +50,25 @@ public class PostService {
     }
 
     @Transactional
-    public PostSaveResponse createPost(PostRequest request, String userName) {
+    public PostCreateResponse createPost(PostRequest request, String userName) {
         User findUser = findUser(userName);
         Post newPost = Post.createPost(request.getTitle(), request.getBody(), findUser);
         Post savedPost = postRepository.save(newPost);
-        return new PostSaveResponse(SUCCESS_MESSAGE, savedPost.getId());
+        return new PostCreateResponse(SUCCESS_MESSAGE, savedPost.getId());
     }
 
     @Transactional
-    public PostSaveResponse updatePost(Integer postId, PostRequest request, String userName) {
+    public PostUpdateResponse updatePost(Integer postId, PostRequest request, String userName) {
         Post findPost = findPostByAuthorizedUser(postId, userName);
         findPost.updatePost(request.getTitle(), request.getBody());
-        return new PostSaveResponse(UPDATE_MESSAGE, findPost.getId());
+        return new PostUpdateResponse(UPDATE_MESSAGE, findPost.getId());
     }
 
     @Transactional
-    public PostSaveResponse deletePost(Integer postId, String userName) {
+    public PostDeleteResponse deletePost(Integer postId, String userName) {
         Post post = findPostByAuthorizedUser(postId, userName);
         post.deletePost();
-        return new PostSaveResponse(DELETE_MESSAGE, postId);
+        return new PostDeleteResponse(DELETE_MESSAGE, postId);
     }
 
     private Post findPostByAuthorizedUser(Integer postId, String userName) {

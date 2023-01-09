@@ -2,8 +2,10 @@ package com.likelion.mutsasns.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.likelion.mutsasns.domain.dto.request.post.PostRequest;
+import com.likelion.mutsasns.domain.dto.response.post.PostCreateResponse;
+import com.likelion.mutsasns.domain.dto.response.post.PostDeleteResponse;
 import com.likelion.mutsasns.domain.dto.response.post.PostResponse;
-import com.likelion.mutsasns.domain.dto.response.post.PostSaveResponse;
+import com.likelion.mutsasns.domain.dto.response.post.PostUpdateResponse;
 import com.likelion.mutsasns.exception.AppException;
 import com.likelion.mutsasns.exception.ErrorCode;
 import com.likelion.mutsasns.service.PostService;
@@ -93,7 +95,7 @@ class PostApiControllerTest {
     @DisplayName("포스트 작성 성공")
     @WithMockUser
     void create_post_success() throws Exception {
-        when(postService.createPost(any(), any())).thenReturn(new PostSaveResponse("포스트 등록 완료", 1));
+        when(postService.createPost(any(), any())).thenReturn(new PostCreateResponse("포스트 등록 완료", 1));
 
         mockMvc.perform(post("/api/v1/posts")
                         .with(csrf())
@@ -138,7 +140,7 @@ class PostApiControllerTest {
     @WithMockUser
     void update_post_success() throws Exception {
         when(postService.updatePost(any(), any(), any()))
-                .thenReturn(new PostSaveResponse("포스트 수정 완료", 1));
+                .thenReturn(new PostUpdateResponse("포스트 수정 완료", 1));
 
         mockMvc.perform(put("/api/v1/posts/1")
                         .with(csrf())
@@ -197,6 +199,8 @@ class PostApiControllerTest {
     @DisplayName("포스트 삭제 성공")
     @WithMockUser
     void delete_post_success() throws Exception {
+        when(postService.deletePost(any(), any()))
+                .thenReturn(new PostDeleteResponse("포스트 삭제 성공", 1));
 
         mockMvc.perform(delete("/api/v1/posts/1")
                         .with(csrf())
