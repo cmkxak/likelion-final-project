@@ -24,9 +24,11 @@ public class CommentCreateResponse {
 
     public static CommentCreateResponse of(Comment savedComment) {
         return CommentCreateResponse.builder()
+                .id(savedComment.getId())
                 .comment(savedComment.getComment())
                 .userName(savedComment.getUser().getUserName())
                 .postId(savedComment.getPost().getId())
                 .build();
     }
+
 }
