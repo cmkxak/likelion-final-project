@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class CommentResponse {
+public class CommentCreateResponse {
     private Integer id;
     private String comment;
     private String userName;
@@ -23,14 +22,13 @@ public class CommentResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 
-    public static Page<CommentResponse> of(Page<Comment> comments) {
-        return comments.map(comment -> CommentResponse.builder()
-                .id(comment.getId())
-                .comment(comment.getComment())
-                .userName(comment.getUser().getUserName())
-                .postId(comment.getPost().getId())
-                .createdAt(comment.getCreatedAt())
-                .build()
-        );
+    public static CommentCreateResponse of(Comment savedComment) {
+        return CommentCreateResponse.builder()
+                .id(savedComment.getId())
+                .comment(savedComment.getComment())
+                .userName(savedComment.getUser().getUserName())
+                .postId(savedComment.getPost().getId())
+                .build();
     }
+
 }

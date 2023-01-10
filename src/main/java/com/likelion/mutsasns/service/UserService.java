@@ -26,19 +26,15 @@ public class UserService {
     @Transactional
     public User join(String userName, String password) {
         validateDuplicateUser(userName);
-
         String encPassword = passwordEncoder.encode(password);
         User user = User.registerUser(userName, encPassword);
-
         return userRepository.save(user);
     }
 
     public String login(String userName, String password) {
         User findUser = findUserByUserName(userName);
-
-        if(!passwordEncoder.matches(password, findUser.getPassword())){
+        if (!passwordEncoder.matches(password, findUser.getPassword()))
             throw new AppException(ErrorCode.INVALID_PASSWORD, "잘못된 비밀번호 입니다.");
-        }
         return tokenProvider.createToken(userName, findUser.getRole().getValue());
     }
 
@@ -47,21 +43,22 @@ public class UserService {
      */
     @Transactional
     public UserRole changeRole(Integer id, UserChangeRoleRequest request) {
-        User findUser = userRepository.findById(id).orElseThrow(() ->
-                new AppException(ErrorCode.USERNAME_NOT_FOUND, "변경하려는 유저가 존재하지 않습니다."));
-
+        User findUser = findUserById(id);
         findUser.changeRole(request.getRole());
-
         return findUser.getRole();
     }
 
     private void validateDuplicateUser(String userName) {
-        userRepository.findByUserName(userName).ifPresent(user -> {
-            throw new AppException(ErrorCode.DUPLICATED_USER_NAME, user.getUserName() + "는 이미 있습니다.");
-        });
+        if (userRepository.existsByUserName(userName))
+            throw new AppException(ErrorCode.DUPLICATED_USER_NAME, userName + "는 이미 있습니다.");
     }
 
-    public User findUserByUserName(String userName){
+    private User findUserById(Integer id) {
+        return userRepository.findById(id).orElseThrow(() ->
+                new AppException(ErrorCode.USERNAME_NOT_FOUND, "변경하려는 유저가 존재하지 않습니다."));
+    }
+
+    private User findUserByUserName(String userName) {
         return userRepository.findByUserName(userName).orElseThrow(() ->
                 new AppException(ErrorCode.USERNAME_NOT_FOUND, userName + "는 존재하지 않는 유저입니다."));
     }

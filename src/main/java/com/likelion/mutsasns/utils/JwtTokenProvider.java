@@ -1,6 +1,5 @@
 package com.likelion.mutsasns.utils;
 
-import com.likelion.mutsasns.service.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -9,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -21,12 +21,12 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    private final UserDetailsServiceImpl userDetailsService;
+    private final UserDetailsService userDetailsService;
     private final Long expireTimeMs;
     private String secretKey;
 
     public JwtTokenProvider(
-            UserDetailsServiceImpl userDetailsService,
+            UserDetailsService userDetailsService,
             @Value("${jwt.token.secret}")String secretKey,
             @Value("${jwt.token.expireTimeMs}")long expireTimeMs) {
         this.userDetailsService = userDetailsService;

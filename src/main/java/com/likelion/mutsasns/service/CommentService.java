@@ -1,13 +1,18 @@
 package com.likelion.mutsasns.service;
 
 import com.likelion.mutsasns.domain.dto.request.comment.CommentRequest;
+import com.likelion.mutsasns.domain.dto.response.comment.CommentCreateResponse;
 import com.likelion.mutsasns.domain.dto.response.comment.CommentDeleteResponse;
+import com.likelion.mutsasns.domain.dto.response.comment.CommentModifyResponse;
 import com.likelion.mutsasns.domain.dto.response.comment.CommentResponse;
+import com.likelion.mutsasns.domain.entity.Alarm;
 import com.likelion.mutsasns.domain.entity.Comment;
 import com.likelion.mutsasns.domain.entity.Post;
 import com.likelion.mutsasns.domain.entity.User;
+import com.likelion.mutsasns.enumerate.AlarmType;
 import com.likelion.mutsasns.exception.AppException;
 import com.likelion.mutsasns.exception.ErrorCode;
+import com.likelion.mutsasns.repository.AlarmRepository;
 import com.likelion.mutsasns.repository.CommentRepository;
 import com.likelion.mutsasns.repository.PostRepository;
 import com.likelion.mutsasns.repository.UserRepository;
@@ -17,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 
 @Transactional
 @RequiredArgsConstructor
@@ -27,6 +33,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final AlarmRepository alarmRepository;
 
     @Transactional(readOnly = true)
     public Page<CommentResponse> findAll(Integer postId, Pageable pageable) {
@@ -34,39 +41,60 @@ public class CommentService {
         return CommentResponse.of(commentRepository.findAllByPostId(postId, pageable));
     }
 
-    public CommentResponse createComment(Integer postId, CommentRequest request, String userName) {
-        Post findPost = validatePostExists(postId);
-        User findUser = userRepository.findByUserName(userName).orElseThrow(() ->
-                new AppException(ErrorCode.USERNAME_NOT_FOUND, ErrorCode.USERNAME_NOT_FOUND.getMessage()));
-        Comment savedComment = commentRepository.save(Comment.createComment(request.getComment(), findPost, findUser));
-        return CommentResponse.of(savedComment);
+    public CommentCreateResponse createComment(Integer postId, CommentRequest request, String userName) {
+        Post post = findPost(postId);
+        User user = findUser(userName);
+        Comment savedComment = commentRepository.save(Comment.createComment(request.getComment(), post, user));
+        saveNewCommentAlarm(postId, user);
+        return CommentCreateResponse.of(savedComment);
     }
 
-    public CommentResponse updateComment(Integer postId, Integer commentId, CommentRequest request, String userName) {
+    public CommentModifyResponse updateComment(Integer postId, Integer commentId, CommentRequest request, String userName) {
         validatePostExists(postId);
-        Comment comment = validateAuthorizedUser(commentId, userName);
+        Comment comment = findCommentByAuthorizedUser(commentId, userName);
         comment.updateComment(request.getComment());
-        return CommentResponse.of(comment);
+        return CommentModifyResponse.of(comment);
     }
 
     public CommentDeleteResponse deleteComment(Integer postId, Integer commentId, String userName) {
         validatePostExists(postId);
-        validateAuthorizedUser(commentId, userName);
-        commentRepository.deleteById(commentId);
+        Comment comment = findCommentByAuthorizedUser(commentId, userName);
+        commentRepository.delete(comment);
         return CommentDeleteResponse.of(DELETE_COMMENT_MESSAGE, commentId);
     }
 
-    private Comment validateAuthorizedUser(Integer commentId, String userName) {
-        User findUser = userRepository.findByUserName(userName).orElseThrow(() ->
-                new AppException(ErrorCode.USERNAME_NOT_FOUND, ErrorCode.USERNAME_NOT_FOUND.getMessage()));
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
-                new AppException(ErrorCode.COMMENT_NOT_FOUND, ErrorCode.COMMENT_NOT_FOUND.getMessage()));
-        if (comment.getUser().getId() == findUser.getId())
+    private void saveNewCommentAlarm(Integer postId, User user) {
+        Integer fromUserId = user.getId();
+        User postWriteUser = findPost(postId).getUser();
+        alarmRepository.save(Alarm.createAlarm(postId, fromUserId,
+                AlarmType.NEW_COMMENT_ON_POST.getMessage(), AlarmType.NEW_COMMENT_ON_POST, postWriteUser));
+    }
+
+    private Comment findCommentByAuthorizedUser(Integer commentId, String userName) {
+        User findUser = findUser(userName);
+        Comment comment = findComment(commentId);
+        if (Objects.equals(comment.getUser().getId(), findUser.getId()))
             return comment;
         else throw new AppException(ErrorCode.INVALID_PERMISSION, ErrorCode.INVALID_PERMISSION.getMessage());
     }
 
-    private Post validatePostExists(Integer postId) {
+    private void validatePostExists(Integer postId){
+        if(!postRepository.existsById(postId)){
+            throw new AppException(ErrorCode.POST_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage());
+        }
+    }
+
+    private User findUser(String userName) {
+        return userRepository.findByUserName(userName).orElseThrow(() ->
+                new AppException(ErrorCode.USERNAME_NOT_FOUND, ErrorCode.USERNAME_NOT_FOUND.getMessage()));
+    }
+
+    private Comment findComment(Integer commentId) {
+        return commentRepository.findById(commentId).orElseThrow(() ->
+                new AppException(ErrorCode.COMMENT_NOT_FOUND, ErrorCode.COMMENT_NOT_FOUND.getMessage()));
+    }
+
+    private Post findPost(Integer postId) {
         return postRepository.findById(postId).orElseThrow(() ->
                 new AppException(ErrorCode.POST_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage()));
     }
