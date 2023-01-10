@@ -64,8 +64,10 @@ public class CommentService {
     }
 
     private void saveNewCommentAlarm(Integer postId, User user) {
-        alarmRepository.save(Alarm.createAlarm(postId, user.getId(),
-                AlarmType.NEW_COMMENT_ON_POST.getMessage(), AlarmType.NEW_COMMENT_ON_POST));
+        Integer fromUserId = user.getId();
+        User postWriteUser = findPost(postId).getUser();
+        alarmRepository.save(Alarm.createAlarm(postId, fromUserId,
+                AlarmType.NEW_COMMENT_ON_POST.getMessage(), AlarmType.NEW_COMMENT_ON_POST, postWriteUser));
     }
 
     private Comment findCommentByAuthorizedUser(Integer commentId, String userName) {
