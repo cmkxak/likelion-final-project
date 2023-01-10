@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class LikeService {
 
     private static final String SUCCESS_LIKE_MESSAGE = "좋아요를 눌렀습니다.";
-    private static final String DUPLICATE_LIKE_MESSAGE = "이미 좋아요를 누른 유저입니다.";
+    private static final String DUPLICATE_LIKE_USER_MESSAGE = "이미 좋아요를 누른 유저입니다.";
     private final LikeRepository likeRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
@@ -43,13 +43,15 @@ public class LikeService {
     }
 
     private void saveNewLikeAlarm(Integer postId, String userName) {
-        alarmRepository.save(Alarm.createAlarm(postId, findUser(userName).getId(),
-                AlarmType.NEW_LIKE_ON_POST.getMessage(), AlarmType.NEW_LIKE_ON_POST));
+        Integer fromUserId = findUser(userName).getId();
+        User postWriteUser = findPost(postId).getUser();
+        alarmRepository.save(Alarm.createAlarm(postId, fromUserId,
+                AlarmType.NEW_LIKE_ON_POST.getMessage(), AlarmType.NEW_LIKE_ON_POST, postWriteUser));
     }
 
     private void validateDuplicateLike(User user, Post post) {
-         likeRepository.findByUserAndPost(user, post).ifPresent(like -> {
-            throw new AppException(ErrorCode.DUPLICATED_USER_NAME, DUPLICATE_LIKE_MESSAGE);
+        likeRepository.findByUserAndPost(user, post).ifPresent(like -> {
+            throw new AppException(ErrorCode.DUPLICATED_USER_NAME, DUPLICATE_LIKE_USER_MESSAGE);
         });
     }
 
@@ -62,4 +64,5 @@ public class LikeService {
         return postRepository.findById(postId).orElseThrow(() ->
                 new AppException(ErrorCode.POST_NOT_FOUND, ErrorCode.POST_NOT_FOUND.getMessage()));
     }
+
 }
