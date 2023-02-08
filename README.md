@@ -14,9 +14,6 @@ MutsaSNS는 멋쟁이 사자처럼 백엔드 스쿨 2기 파이널 프로젝트 
 ![Amazon EC2](https://img.shields.io/badge/Amazon_EC2-FF9900?style=for-the-badge&logo=AmazonEC2&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=Docker&logoColor=white)
 
-## 📃 SWAGGER
-LINK : http://ec2-43-200-177-237.ap-northeast-2.compute.amazonaws.com:8080/swagger-ui/
-
 ## 📃 ERD
 ![erd](https://user-images.githubusercontent.com/71599552/211246134-b8359d17-9a03-4774-a39c-f268a8620484.PNG)
 
